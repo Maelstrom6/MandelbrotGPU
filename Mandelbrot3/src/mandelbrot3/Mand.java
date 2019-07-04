@@ -111,8 +111,56 @@ public class Mand {
             return mapNoMirror();
         }
     }
-
+    
     public BufferedImage mapNoMirror() {
+        map = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
+        iter = 0;
+        Thread[] column = new Thread[threads];
+        for (int i = 0; i < threads; i++) {
+            column[i] = new Thread(new Runnable() {
+                public void run() {
+                    int id = iter;
+                    iter++;
+                    //int num;
+                    double num;
+                    int scaler, scaleg, scaleb;
+                    for (int x = id; x < sizeX; x += threads) {
+                        for (int i = 0; i < sizeY; i++) {
+                            double startingxCoordinate = (-limX * (1.0 * sizeX / sizeY) + (2.0 * limX * x / sizeY) + centreX);
+                            double startingyCoordinate = (limY - (2.0 * limY * i / sizeY) + centreY);
+                            Myi coordinate = (Transform(new Myi(startingxCoordinate, startingyCoordinate, false)));
+                            //double xCoordinate = TransformX(startingxCoordinate, startingyCoordinate);
+                            //double yCoordinate = TransformY(startingxCoordinate, startingyCoordinate);
+                            double xCoordinate = coordinate.getRe();
+                            double yCoordinate = coordinate.getIm();
+                            num = (double) (PartOfMand(xCoordinate, yCoordinate));
+                            //num = (int) (PartSet((-limX + (2.0 * limX * x / sizeX) + centreX), (limY - (2.0 * limY * i / sizeY)+centreY)));//-(2-xLim) for x to move it left
+                            if (num == maxI) {//need to change this if yuou change i<100
+                                map.setRGB(x, i, Color.BLACK.getRGB());
+                            } else {
+                                scaler = getRedFromN(num);//divide everything by 4 for smoother transition
+                                scaleg = getGreenFromN(num);
+                                scaleb = getBlueFromN(num);
+                                map.setRGB(x, i, new Color(scaler, scaleg, scaleb).hashCode());
+                            }
+                        }
+                    }
+                }
+            });
+            column[i].setPriority(Thread.MIN_PRIORITY);
+            column[i].start();
+        }
+        for (int i = 0; i < threads; i++) {
+            try {
+                column[i].join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Mand.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return map;
+    }
+
+    public BufferedImage mapChangedFn() {
         map = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
         iter = 0;
         Thread[] column = new Thread[threads];
