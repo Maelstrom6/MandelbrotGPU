@@ -63,7 +63,7 @@ public class FractalManager {
     protected cl_kernel kernel;
     private static double[] fractalData;
 
-    public FractalManager(String fractalType, String fn, ArrayList<Integer> transforms, int iterations) {
+    public FractalManager() {
         // Enable exceptions and subsequently omit error checks in this sample
         CL.setExceptionsEnabled(true);
 
@@ -89,8 +89,6 @@ public class FractalManager {
         // Create a context and command queue for the selected device
         context = clCreateContext(properties, 1, new cl_device_id[]{device}, null, null, null);
         queue = clCreateCommandQueue(context, device, 0, null);
-
-        LoadProgram(fractalType, fn, transforms, iterations);
     }
 
     public void LoadProgram(String fractalType, String fn, ArrayList<Integer> transforms, int iterations) {
@@ -282,6 +280,20 @@ public class FractalManager {
         return image;
     }
 
+    public void createThings(FractalSettings settings) {
+        settings.transformOperators = new ArrayList();
+
+        for (int i = 0; i <= 6; i++) {
+            for (int j = 0; j <= 6; j++) {
+                settings.transformOperators.clear();
+                settings.transformOperators.add(i);
+                settings.transformOperators.add(j);
+                LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, settings.maxIterations);
+                savePNG(createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Buddhas test\\MyNewTest" + i + " " + j + ".png");
+            }
+        }
+    }
+
     private double[] create1000x1000Block(final FractalSettings settings) {//Takes about 10 seconds at 5000 iterations
         return createDataMandelbrot(settings);
     }
@@ -327,13 +339,13 @@ public class FractalManager {
 
     protected double[] createDataBuddhaComplex(final FractalSettings settings) {
         int blockSize = 500;
-        double[] results = new double[settings.sizeX * settings.sizeY *3];
+        double[] results = new double[settings.sizeX * settings.sizeY * 3];
         double[] tempResults;
 
         FractalSettings blockSettings = settings.clone();
         for (int x = 0; x < settings.sizeX; x += blockSize) {
             for (int y = 0; y < settings.sizeY; y += blockSize) {
-                tempResults = new double[settings.sizeX * settings.sizeY *3];
+                tempResults = new double[settings.sizeX * settings.sizeY * 3];
                 System.out.println("Creating block " + ((x / blockSize) * (settings.sizeY / blockSize) + y / blockSize + 1) + " of " + (int) (Math.ceil(1.0 * settings.sizeX / blockSize) * Math.ceil(1.0 * settings.sizeY / blockSize)));
                 blockSettings.sizeX = Math.min(blockSize, settings.sizeX - x);
                 blockSettings.sizeY = Math.min(blockSize, settings.sizeY - y);
@@ -375,10 +387,10 @@ public class FractalManager {
                 for (cl_mem m : mem) {
                     clReleaseMemObject(m);
                 }
-                
+
                 //add tempResults to results
-                for(int i=0;i<settings.sizeX * settings.sizeY * 3;i++){
-                    results[i]+=tempResults[i];
+                for (int i = 0; i < settings.sizeX * settings.sizeY * 3; i++) {
+                    results[i] += tempResults[i];
                 }
             }
         }
@@ -423,7 +435,7 @@ public class FractalManager {
 
         return results;
     }
-    
+
     protected double[] createDataBuddhaMirror(final FractalSettings settings) {
 
         double[] results = new double[settings.sizeX * settings.sizeY * 3];
@@ -458,14 +470,14 @@ public class FractalManager {
         for (cl_mem m : mem) {
             clReleaseMemObject(m);
         }
-        
-        for(int i=0;i<settings.sizeX * settings.sizeY;i++){
+
+        for (int i = 0; i < settings.sizeX * settings.sizeY; i++) {
             int x = i % settings.sizeX;
             int y = i / settings.sizeX;
             //results[i]= results[((settings.sizeX - y - 1)*settings.sizeX+x)] = results[i]+ results[((settings.sizeX - y - 1)*settings.sizeX+x)];
-            results[i*3]= results[((settings.sizeX - y - 1)*settings.sizeX+x)*3] = results[i*3]+ results[((settings.sizeX - y - 1)*settings.sizeX+x)*3];
-            results[i*3+1]= results[((settings.sizeX - y - 1)*settings.sizeX+x)*3+1] = results[i*3+1]+ results[((settings.sizeX - y - 1)*settings.sizeX+x)*3+1];
-            results[i*3+2]= results[((settings.sizeX - y - 1)*settings.sizeX+x)*3+2] = results[i*3+2]+ results[((settings.sizeX - y - 1)*settings.sizeX+x)*3+2];
+            results[i * 3] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3] = results[i * 3] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3];
+            results[i * 3 + 1] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1] = results[i * 3 + 1] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1];
+            results[i * 3 + 2] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2] = results[i * 3 + 2] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2];
         }
 
         return results;
@@ -482,7 +494,7 @@ public class FractalManager {
         clReleaseContext(context);
         clReleaseKernel(kernel);
         clReleaseProgram(program);
-        
+
     }
 
     public void savePNG(final BufferedImage bi, final String path) {
