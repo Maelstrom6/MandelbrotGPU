@@ -25,15 +25,53 @@ public class Launcher {
         //settings.transformOperators.add(-4);
         //settings.transformOperators.add(6);
         //settings.transformOperators.add(4);
-        settings.leftest = -2;
-        settings.rightest = 2;
-        settings.highest = 2;
-        settings.lowest = -2;
-        settings.fn = "addComplex(powComplex(zn, 3), c)";
+        settings.leftest = -4;
+        settings.rightest = 4;
+        settings.highest = 4;
+        settings.lowest = -4;
+        //settings.fn = "addComplex(powComplex(zn, 3), c)";
         obj = new FractalManager();
         
-        //obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
-        //obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
+        settings.transformOperators.add(-2);
+        settings.transformOperators.add(4);
+        settings.transformOperators.add(-103); // The 1/10th power
+        settings.transformOperators.add(204); // The 20+ith power
+        obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
+        obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
+        
+        /*for(int i = 0;i<=10;i++){//going from 1/2 to 1/3
+            settings.transformOperators.clear();
+            //settings.transformOperators.add(-13); // The 1/10th power
+            //settings.transformOperators.add(23+i); // The 20+ith power
+            settings.transformOperators.add(-2);
+            settings.transformOperators.add(4);
+            settings.transformOperators.add(-13); // The 1/10th power
+            settings.transformOperators.add(23+i); // The 20+ith power
+            //settings.transformOperators.add(-(23+i)); // The 20+ith power
+            //settings.transformOperators.add(13); // The 1/10th power
+            
+            
+            obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
+            obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Transitions3\\MyNewTest" + i + ".png");
+        }*/
+        
+        double speed = 0.01;
+        for(double i = 0;i<=1;i+=speed){//going from 1/2 to 1/3
+            
+            settings.transformOperators.clear();
+            //settings.transformOperators.add(-13); // The 1/10th power
+            //settings.transformOperators.add(23+i); // The 20+ith power
+            settings.transformOperators.add(-2);
+            settings.transformOperators.add(4);
+            settings.transformOperators.add(-power((int)(1/speed))); // The 1/10th power
+            settings.transformOperators.add(power((int)(2/speed+i/speed))); // The 20+ith power
+            //settings.transformOperators.add(-(23+i)); // The 20+ith power
+            //settings.transformOperators.add(13); // The 1/10th power
+            
+            
+            obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
+            obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Transitions4\\MyNewTest" + Math.round(i*1000) + ".png");
+        }
         
         /*for (int i = -6; i <= 6; i++) {
             settings.transformOperators.clear();
@@ -59,6 +97,10 @@ public class Launcher {
         }*/
 
         // TODO code application logic here
+    }
+    
+    public static int power(int i){
+        return i+3;
     }
 
 }
