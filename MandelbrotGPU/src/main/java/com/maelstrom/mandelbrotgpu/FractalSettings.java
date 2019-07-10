@@ -18,7 +18,7 @@ public class FractalSettings {
     public int maxIterations = 5000;
     public String fractalType="Mandelbrot";
     public double f0Re=0, f0Im=0; // Only used for julia
-    public String fn= "addComplex(powComplex(zn, 2), c);";//The formula that will be iterated
+    public String fn= "addComplex(powComplex(zn, 2), c)";//The formula that will be iterated. Available variables are zn, c and n.
     public ArrayList<Integer> transformOperators=new ArrayList();//A list of operator id's in RPN
     
     public FractalSettings(){

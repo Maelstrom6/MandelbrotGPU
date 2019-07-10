@@ -21,19 +21,28 @@ public class Launcher {
         settings.sizeX = 300;
         settings.sizeY = 300;
         settings.fractalType = "Buddha";
-        settings.fractalType = "Mandelbrot";
-        settings.transformOperators.add(-6);
-        settings.transformOperators.add(-2);
-        settings.transformOperators.add(6);
-        settings.leftest = -4;
-        settings.rightest = 4;
-        settings.highest = 4;
-        settings.lowest = -4;
+        //settings.fractalType = "Mandelbrot";
+        //settings.transformOperators.add(-4);
+        //settings.transformOperators.add(6);
+        //settings.transformOperators.add(4);
+        settings.leftest = -2;
+        settings.rightest = 2;
+        settings.highest = 2;
+        settings.lowest = -2;
+        settings.fn = "addComplex(powComplex(zn, 3), c)";
         obj = new FractalManager();
-        obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
+        
+        //obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
         //obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
+        
+        /*for (int i = -6; i <= 6; i++) {
+            settings.transformOperators.clear();
+            settings.transformOperators.add(i);
+            obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
+            obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Buddhas cubed 1\\MyNewTest" + i + ".png");
+        }*/
 
-        for (int i = -6; i <= 6; i++) {
+        /*for (int i = -6; i <= 6; i++) {
             for (int j = -6; j <= 6; j++) {
                 for (int k = -6; k <= 6; k++) {
                     if (i == -j || j == -k) {
@@ -47,7 +56,7 @@ public class Launcher {
                     obj.savePNG(obj.createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Mandelbrots 3\\MyNewTest" + i + " " + j + " " + k + ".png");
                 }
             }
-        }
+        }*/
 
         // TODO code application logic here
     }

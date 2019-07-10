@@ -31,7 +31,7 @@ kernel void fractalKernel(
 		results[id] = -1;
                 struct Complex zn;
 		for(int i = 1; i < *iterations; i++) {
-			zn = fn(znMinOne, c);
+			zn = fn(znMinOne, c, i);
 
 			if(zn.r > threshold) {
 				double k = (threshold - znMinOne.r) / abs(znMinOne.r - zn.r);

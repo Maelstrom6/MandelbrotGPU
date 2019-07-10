@@ -109,7 +109,7 @@ public class FractalManager {
         //mandelbrotSRC = mandelbrotSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
         String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
         String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c){"
+        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
         complexSRC += "struct Complex transform(struct Complex z){\n"
                 + "		return " + t + ";\n"
@@ -131,7 +131,7 @@ public class FractalManager {
         String mandelbrotSRC = readFile(mandFileName);
         String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
         String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c){"
+        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
         complexSRC += "struct Complex transform(struct Complex z){\n"
                 + "		return " + t + ";\n"

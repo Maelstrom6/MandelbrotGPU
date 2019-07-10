@@ -29,7 +29,7 @@ kernel void fractalKernel(
 
 
 		for(int i = 0; i < *iterations; i++) {
-			zn = fn(zn, c);
+			zn = fn(zn, c, i);
 
 			visitedCoordinates[i] = zn;
 
