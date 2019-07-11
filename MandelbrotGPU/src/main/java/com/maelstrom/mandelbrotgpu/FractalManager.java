@@ -31,7 +31,6 @@ import static org.jocl.CL.clCreateKernel;
 import static org.jocl.CL.clCreateProgramWithSource;
 import static org.jocl.CL.clEnqueueNDRangeKernel;
 import static org.jocl.CL.clEnqueueReadBuffer;
-import static org.jocl.CL.clFinish;
 import static org.jocl.CL.clGetDeviceIDs;
 import static org.jocl.CL.clGetPlatformIDs;
 import static org.jocl.CL.clReleaseCommandQueue;
@@ -91,39 +90,113 @@ public class FractalManager {
         queue = clCreateCommandQueue(context, device, 0, null);
     }
 
+    /**
+     * Creates the kernel and creates the image
+     *
+     * @param settings The settings of the fractal
+     * @param colorSchemeID The ID of the coloring scheme to be parsed to
+     * ColorScheme
+     * @return The BufferedImage of our fractal
+     */
+    public BufferedImage createProgramAndImage(final FractalSettings settings, final int colorSchemeID) {
+        LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, settings.maxIterations);
+        return createImage(settings, colorSchemeID);
+    }
+
+    /**
+     * Creates the kernel and program for any implemented fractal given its type
+     *
+     * @param fractalType The type of fractal to be created
+     * @param fn The function to be iterated. Written in the language of C99.
+     * This can be a function of zn, c and n
+     * @param transforms The ArrayList of operator ID's
+     */
     public void LoadProgram(String fractalType, String fn, ArrayList<Integer> transforms, int iterations) {
-        if ("Mandelbrot".equals(fractalType)) {
-            LoadProgramMandelbrot(fn, transforms);
-        } else if ("Buddha".equals(fractalType)) {
+        if ("Buddha".equals(fractalType)) {
             LoadProgramBuddha(fn, transforms, iterations);
+        } else if ("Buddha complex".equals(fractalType)) {
+            LoadProgramBuddhaComplex(fn, transforms, iterations);
         } else {
             LoadProgramMandelbrot(fn, transforms);
         }
     }
 
+    /**
+     * Creates the kernel and program for buddha Note: if you want to go more
+     * than 5000 iterations, you need to manually change visitedCoordinates
+     * array size in the OnlyBuddhaSimple.cl kernel
+     *
+     * @param fn The function to be iterated. Written in the language of C99.
+     * This can be a function of zn, c and n
+     * @param transforms The ArrayList of operator ID's
+     */
     public void LoadProgramBuddha(final String fn, final ArrayList<Integer> transforms, int iterations) {
-        String t = getStringTransform(transforms);
-        String it = getStringInverseTransform(transforms);
+        // Load the buddhaComplex source code
         String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyBuddhaSimple.cl";
-        String mandelbrotSRC = readFile(buddhaFileName);
-        //mandelbrotSRC = mandelbrotSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
+        String buddhaSRC = readFile(buddhaFileName);
+        // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
+        buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
+        
+        // Load the onlyComplex source code
         String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
         String complexSRC = readFile(complexFileName);
         complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
         complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + t + ";\n"
+                + "		return " + getStringTransform(transforms) + ";\n"
                 + "	}\n\n";
         complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + it + ";\n"
+                + "		return " + getStringInverseTransform(transforms) + ";\n"
                 + "	}\n\n";
 
         // Create the kernel
-        program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, mandelbrotSRC}, null, null);
+        program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
         clBuildProgram(program, 0, null, null, null, null);
         kernel = clCreateKernel(program, "fractalKernel", null);
     }
 
+    /**
+     * Creates the kernel and program for buddha Note: if you want to go more
+     * than 5000 iterations, you need to manually change visitedCoordinates
+     * array size in the OnlyBuddhaSimple.cl kernel
+     *
+     * @param fn The function to be iterated. Written in the language of C99.
+     * This can be a function of zn, c and n
+     * @param transforms The ArrayList of operator ID's
+     * @param iterations The maximum number of iterations to be done
+     */
+    public void LoadProgramBuddhaComplex(final String fn, final ArrayList<Integer> transforms, int iterations) {
+        // Load the buddhaComplex source code
+        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyBuddhaComplex.cl";
+        String buddhaSRC = readFile(buddhaFileName);
+        // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
+        buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
+        
+        // Load the onlyComplex source code
+        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
+        String complexSRC = readFile(complexFileName);
+        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
+                + "\n" + "return " + fn + ";\n}\n\n";
+        complexSRC += "struct Complex transform(struct Complex z){\n"
+                + "		return " + getStringTransform(transforms) + ";\n"
+                + "	}\n\n";
+        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
+                + "		return " + getStringInverseTransform(transforms) + ";\n"
+                + "	}\n\n";
+
+        // Create the kernel
+        program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
+        clBuildProgram(program, 0, null, null, null, null);
+        kernel = clCreateKernel(program, "fractalKernel", null);
+    }
+
+    /**
+     * Creates the kernel and program for mandelbrot
+     *
+     * @param fn The function to be iterated. Written in the language of C99.
+     * This can be a function of zn, c and n
+     * @param transforms The ArrayList of operator ID's
+     */
     public void LoadProgramMandelbrot(final String fn, final ArrayList<Integer> transforms) {
         String t = getStringTransform(transforms);
         String it = getStringInverseTransform(transforms);
@@ -146,6 +219,12 @@ public class FractalManager {
         kernel = clCreateKernel(program, "fractalKernel", null);
     }
 
+    /**
+     * Creates the kernel code for the function Transform
+     *
+     * @param operatorString The ArrayList of operator ID's
+     * @return The resultant kernel code
+     */
     private String getStringTransform(final ArrayList<Integer> operatorString) {
         String input = "z";
         if (operatorString.size() > 0) {
@@ -158,6 +237,12 @@ public class FractalManager {
         return input;
     }
 
+    /**
+     * Creates the kernel code for the function InverseTransform
+     *
+     * @param operatorString The ArrayList of operator ID's
+     * @return The resultant kernel code
+     */
     private String getStringInverseTransform(final ArrayList<Integer> operatorString) {
         String input = "z";
         if (operatorString.size() > 0) {
@@ -169,6 +254,13 @@ public class FractalManager {
         return input;
     }
 
+    /**
+     * Creates the kernel code for a function given its ID
+     *
+     * @param id The ID of the function
+     * @param input The string that the function is being applied to
+     * @return The resultant kernel code
+     */
     private String getStringFunction(final int id, final String input) {
         switch (id) {
             case 0:
@@ -198,45 +290,17 @@ public class FractalManager {
         }
     }
 
-    public void LoadProgramMandelbrot(int PutThisHereToOverload) {
-        // Load the program
-        String[] lines = null;
-
-        // Try to load the program from the jar, if that fails try loading from current directory,
-        // if that fails throw an exception so the rest of the program can handle it
-        //File file = new File("calc.cl");
-        File file = new File("C:\\Users\\Chris\\Documents\\NetBeansProjects\\MandelbrotGPU\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\Mandelbrot.cl");
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            StringBuilder builder = new StringBuilder();
-
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                builder.append(line).append("\n");
-            }
-
-            lines = new String[]{builder.toString()};
-        } catch (IOException ex) {
-            System.out.println("Could not read file from " + file);
-            Logger
-                    .getLogger(FractalManager.class
-                            .getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // Create the kernel
-        program = clCreateProgramWithSource(context, 1, lines, null, null);
-        clBuildProgram(program, 0, null, null, null, null);
-        kernel = clCreateKernel(program, "fractalKernel", null);
-    }
-
     /**
-     * Calculate the fractal asynchronously for a given settings and size
+     * Calculate the fractal for given settings and color scheme only for
+     * mandelbrot. Should be used for large mandelbrot images like 3000x3000 or
+     * bigger
      *
      * @param settings The fractal settings we want to render
-     * @param colorSchemeID
-     * @return
+     * @param colorSchemeID The ID of the coloring scheme to be parsed to
+     * ColorScheme
+     * @return The BufferedImage of our fractal
      */
-    public BufferedImage createImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createDataMandelbrotComplex(final FractalSettings settings, final int colorSchemeID) {
         final long time = System.nanoTime();
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
@@ -250,7 +314,7 @@ public class FractalManager {
                 blockSettings.rightest = settings.leftest + (settings.rightest - settings.leftest) * (x + blockSettings.sizeX) / settings.sizeX;
                 blockSettings.highest = settings.highest + (settings.lowest - settings.highest) * y / settings.sizeY;
                 blockSettings.lowest = settings.highest + (settings.lowest - settings.highest) * (y + blockSettings.sizeY) / settings.sizeY;
-                fractalData = create1000x1000Block(blockSettings);
+                fractalData = createDataMandelbrot(blockSettings);
                 image.getRaster().setPixels(x, y, blockSettings.sizeX, blockSettings.sizeY,
                         scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
             }
@@ -260,15 +324,33 @@ public class FractalManager {
         return image;
     }
 
-    public BufferedImage createImageSimple(final FractalSettings settings, final int colorSchemeID) {
+    /**
+     * Calculate the fractal for given settings and color scheme
+     *
+     * @param settings The fractal settings we want to render
+     * @param colorSchemeID The ID of the coloring scheme to be parsed to
+     * ColorScheme
+     * @return The BufferedImage of our fractal
+     */
+    public BufferedImage createImage(final FractalSettings settings, final int colorSchemeID) {
         final long time = System.nanoTime();
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
-
-        if ("Buddha".equals(settings.fractalType)) {
+        
+        // Create the image depending on whether it is buddha or mandelbrot and so on
+        if ("buddha".equals(settings.fractalType.toLowerCase())) {
             fractalData = createDataBuddhaMirror(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
                     scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+            
+        } else if ("buddha complex".equals(settings.fractalType.toLowerCase())) {
+            fractalData = createDataBuddhaComplex(settings);
+            image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
+                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+            
+        } else if ("mandelbrot complex".equals(settings.fractalType.toLowerCase())) {
+            return createDataMandelbrotComplex(settings, colorSchemeID);
+            
         } else {
             fractalData = createDataMandelbrot(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
@@ -280,30 +362,15 @@ public class FractalManager {
         return image;
     }
 
-    public void createThings(FractalSettings settings) {
-        settings.transformOperators = new ArrayList();
-
-        for (int i = 0; i <= 6; i++) {
-            for (int j = 0; j <= 6; j++) {
-                settings.transformOperators.clear();
-                settings.transformOperators.add(i);
-                settings.transformOperators.add(j);
-                LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, settings.maxIterations);
-                savePNG(createImageSimple(settings, 0), System.getProperty("user.dir") + "\\Buddhas test\\MyNewTest" + i + " " + j + ".png");
-            }
-        }
-    }
-
-    private double[] create1000x1000Block(final FractalSettings settings) {//Takes about 10 seconds at 5000 iterations
-        return createDataMandelbrot(settings);
-    }
-
-    private String[] getImplementedFractals() {
-        return new String[]{"Mandlebrot", "Burning Ship", "Tricorn", "Nova", "Circle"};
-    }
-
+    /**
+     * Calculate the fractal for given settings
+     *
+     * @param settings The fractal settings we want to render
+     * @return The double[] of our fractal
+     */
     protected double[] createDataMandelbrot(final FractalSettings settings) {
 
+        // Create a new blank array to store the results
         double[] results = new double[settings.sizeX * settings.sizeY];
 
         // Allocate the memory objects for the input and output data
@@ -337,15 +404,36 @@ public class FractalManager {
         return results;
     }
 
+    /**
+     * Calculate the buddha in blockSize x blockSize blocks
+     *
+     * @param settings The fractal settings we want to render
+     * @return double[] of our buddha
+     */
     protected double[] createDataBuddhaComplex(final FractalSettings settings) {
-        int blockSize = 500;
+        // Define the side length of each block to render
+        int blockSize = 1000;
+
+        // Create a new blank array to store the results
         double[] results = new double[settings.sizeX * settings.sizeY * 3];
         double[] tempResults;
-
+        for (int i = 0; i < results.length; i++) {
+            results[i] = 0;
+        }
+        // Initialize the settings for each block
         FractalSettings blockSettings = settings.clone();
+
+        // Loop through each block
         for (int x = 0; x < settings.sizeX; x += blockSize) {
             for (int y = 0; y < settings.sizeY; y += blockSize) {
+
+                // Reset tempResults
                 tempResults = new double[settings.sizeX * settings.sizeY * 3];
+                for (int i = 0; i < tempResults.length; i++) {
+                    tempResults[i] = 0;
+                }
+
+                // Adjust the settings for the current block
                 System.out.println("Creating block " + ((x / blockSize) * (settings.sizeY / blockSize) + y / blockSize + 1) + " of " + (int) (Math.ceil(1.0 * settings.sizeX / blockSize) * Math.ceil(1.0 * settings.sizeY / blockSize)));
                 blockSettings.sizeX = Math.min(blockSize, settings.sizeX - x);
                 blockSettings.sizeY = Math.min(blockSize, settings.sizeY - y);
@@ -398,8 +486,15 @@ public class FractalManager {
         return results;
     }
 
+    /**
+     * Calculate the buddha for given settings
+     *
+     * @param settings The fractal settings we want to render
+     * @return double[] of our buddha
+     */
     protected double[] createDataBuddhaSimple(final FractalSettings settings) {
 
+        // Create a blank array to store the output
         double[] results = new double[settings.sizeX * settings.sizeY * 3];
         for (int i = 0; i < results.length; i++) {
             results[i] = 0;
@@ -436,8 +531,16 @@ public class FractalManager {
         return results;
     }
 
+    /**
+     * Calculate the buddha for given settings Calculated by finding the top
+     * half of the image and mirroring the bottom
+     *
+     * @param settings The fractal settings we want to render
+     * @return double[] of our fractal
+     */
     protected double[] createDataBuddhaMirror(final FractalSettings settings) {
 
+        // Create a blank array to store the output
         double[] results = new double[settings.sizeX * settings.sizeY * 3];
         for (int i = 0; i < results.length; i++) {
             results[i] = 0;
@@ -471,10 +574,10 @@ public class FractalManager {
             clReleaseMemObject(m);
         }
 
+        // Mirror the entire result across the x axis
         for (int i = 0; i < settings.sizeX * settings.sizeY; i++) {
             int x = i % settings.sizeX;
             int y = i / settings.sizeX;
-            //results[i]= results[((settings.sizeX - y - 1)*settings.sizeX+x)] = results[i]+ results[((settings.sizeX - y - 1)*settings.sizeX+x)];
             results[i * 3] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3] = results[i * 3] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3];
             results[i * 3 + 1] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1] = results[i * 3 + 1] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1];
             results[i * 3 + 2] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2] = results[i * 3 + 2] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2];
@@ -483,6 +586,7 @@ public class FractalManager {
         return results;
     }
 
+    @Override
     protected void finalize() {
         try {
             // OpenCL requires a cleanup after it runs
@@ -498,14 +602,13 @@ public class FractalManager {
     }
 
     public void savePNG(final BufferedImage bi, final String path) {
+        final long time = System.nanoTime();
         try {
-            RenderedImage rendImage = bi;
-            //ImageIO.write(rendImage, "bmp", new File(path));
-            ImageIO.write(rendImage, "PNG", new File(path));
-            //ImageIO.write(rendImage, "jpeg", new File(path));
+            ImageIO.write(bi, "PNG", new File(path));
         } catch (IOException e) {
             System.out.println("Error saving png.");
         }
+        System.out.println("Took " + (System.nanoTime() - time) / 1_000_000_000.0 + " to save the image");
     }
 
     private String readFile(final String fileName) {

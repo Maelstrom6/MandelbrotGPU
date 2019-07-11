@@ -17,7 +17,7 @@ kernel void fractalKernel(
         global const int *fullWidth,
         global const int *fullHeight,
 
-	global int *results
+	global double *results
 ) {
 
 	/* Find out where we are */
@@ -33,12 +33,12 @@ kernel void fractalKernel(
 		struct Complex c = zn;
 
 		const double threshold = 2;
-                struct Complex visitedCoordinates[5000] = {newComplex(0,0,true)};
+                struct Complex visitedCoordinates[INSERT ITERATIONS HERE] = {newComplex(0,0,true)};
                 //Need to replace the above 5000 with *iterations
 
 
 		for(int i = 0; i < *iterations; i++) {
-			zn = fn(zn, c);
+			zn = fn(zn, c, i);
 
 			visitedCoordinates[i] = zn;
 

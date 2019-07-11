@@ -52,6 +52,14 @@ public class ColorScheme {
     }
 
     public int[] iterationsToRGBBuddha(int schemeID, double[] data, int iterations) {
+        if(schemeID == 1){
+            return nova(data, iterations);
+        }else{
+            return nova(data, iterations);
+        }
+    }
+    
+    public int[] nova(double[] data, int iterations){
         int[] results = new int[data.length];
         int[] maxRGB = FindMax(data);
         for (int i = 0; i < data.length; i += 3) {

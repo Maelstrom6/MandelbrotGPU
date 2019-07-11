@@ -42,18 +42,5 @@ kernel void fractalKernel(
 
 			znMinOne = zn;
 		}
-		
-		/*for(int i = 1; i < *iterations; i++) {
-            
-			if(zn.r > threshold) {
-				results[id] = i;
-				break;
-            }
-			zn = fn(zn, c);
-		}
-		double logzn = log(zn.r);
-        double nu = log(logzn / log(2.0f)) / log(2.0f);
-		results[id] = results[id] - nu;*/
-		
 	}
 };

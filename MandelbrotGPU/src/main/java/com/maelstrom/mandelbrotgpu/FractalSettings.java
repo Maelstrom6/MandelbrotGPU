@@ -20,6 +20,8 @@ public class FractalSettings {
     public double f0Re=0, f0Im=0; // Only used for julia
     public String fn= "addComplex(powComplex(zn, 2), c)";//The formula that will be iterated. Available variables are zn, c and n.
     public ArrayList<Integer> transformOperators=new ArrayList();//A list of operator id's in RPN
+    public int colorSchemeID = 1;
+    //Maybe add threshold
     
     public FractalSettings(){
     }
@@ -37,7 +39,7 @@ public class FractalSettings {
         this.transformOperators = transformOperators;
     }
     
-    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, String fractalType, double f0Re, double f0Im, String fn, ArrayList<Integer> transformOperators) {
+    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, int maxIterations, String fractalType, double f0Re, double f0Im, String fn, ArrayList<Integer> transformOperators, int colorSchemeID) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.leftest = leftest;
@@ -45,15 +47,17 @@ public class FractalSettings {
         this.highest = highest;
         this.lowest = lowest;
         this.mirrorXaxis = mirrorXaxis;
+        this.maxIterations = maxIterations;
         this.fractalType = fractalType;
         this.f0Re = f0Re;
         this.f0Im = f0Im;
         this.fn = fn;
         this.transformOperators = transformOperators;
+        this.colorSchemeID = colorSchemeID;
     }
     
     public FractalSettings clone(){
-        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, fractalType, f0Re, f0Im, fn, transformOperators);
+        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, maxIterations, fractalType, f0Re, f0Im, fn, transformOperators, colorSchemeID);
     }
     
     public void exportJSON(){
@@ -62,5 +66,9 @@ public class FractalSettings {
     
     public void importJSON(){
         
+    }
+    
+    public String toString(){
+        return sizeX+" "+sizeY+" "+leftest+" "+rightest+" "+highest+" "+lowest+" "+fractalType;
     }
 }
