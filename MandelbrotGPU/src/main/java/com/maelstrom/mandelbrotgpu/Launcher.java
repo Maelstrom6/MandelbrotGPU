@@ -22,7 +22,7 @@ public class Launcher {
         settings.sizeX = 1000;
         settings.sizeY = 1000;
         settings.fractalType = "Buddha";
-        //settings.fractalType = "Mandelbrot";
+        settings.fractalType = "Mandelbrot";
         //settings.transformOperators.add(-4);
         //settings.transformOperators.add(6);
         //settings.transformOperators.add(4);

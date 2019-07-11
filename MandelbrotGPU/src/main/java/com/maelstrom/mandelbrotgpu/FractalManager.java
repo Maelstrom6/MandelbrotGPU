@@ -6,7 +6,6 @@
 package com.maelstrom.mandelbrotgpu;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,37 +107,45 @@ public class FractalManager {
      *
      * @param fractalType The type of fractal to be created
      * @param fn The function to be iterated. Written in the language of C99.
-     * This can be a function of zn, c and n
+     * This can be a function of zn, c and n and can use the methods in
+     * ComplexFunctions.cl file
      * @param transforms The ArrayList of operator ID's
+     * @param iterations The maximum number of iterations to be done
      */
     public void LoadProgram(String fractalType, String fn, ArrayList<Integer> transforms, int iterations) {
-        if ("Buddha".equals(fractalType)) {
-            LoadProgramBuddha(fn, transforms, iterations);
-        } else if ("Buddha complex".equals(fractalType)) {
-            LoadProgramBuddhaComplex(fn, transforms, iterations);
-        } else {
+        if (null == fractalType) {
             LoadProgramMandelbrot(fn, transforms);
+        } else switch (fractalType) {
+            case "Buddha":
+                LoadProgramBuddha(fn, transforms, iterations);
+                break;
+            case "Buddha complex":
+                LoadProgramBuddhaComplex(fn, transforms, iterations);
+                break;
+            default:
+                LoadProgramMandelbrot(fn, transforms);
+                break;
         }
     }
 
     /**
-     * Creates the kernel and program for buddha Note: if you want to go more
-     * than 5000 iterations, you need to manually change visitedCoordinates
-     * array size in the OnlyBuddhaSimple.cl kernel
+     * Creates the kernel and program for buddha
      *
      * @param fn The function to be iterated. Written in the language of C99.
-     * This can be a function of zn, c and n
+     * This can be a function of zn, c and n and can use the methods in
+     * ComplexFunctions.cl file
      * @param transforms The ArrayList of operator ID's
+     * @param iterations The maximum number of iterations to be done
      */
     public void LoadProgramBuddha(final String fn, final ArrayList<Integer> transforms, int iterations) {
-        // Load the buddhaComplex source code
-        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyBuddhaSimple.cl";
+        // Load the BuddhaKernel source code
+        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\BuddhaKernel.cl";
         String buddhaSRC = readFile(buddhaFileName);
         // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
         
-        // Load the onlyComplex source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
+        // Load the ComplexFunctions source code
+        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\ComplexFunctions.cl";
         String complexSRC = readFile(complexFileName);
         complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
@@ -156,24 +163,23 @@ public class FractalManager {
     }
 
     /**
-     * Creates the kernel and program for buddha Note: if you want to go more
-     * than 5000 iterations, you need to manually change visitedCoordinates
-     * array size in the OnlyBuddhaSimple.cl kernel
+     * Creates the kernel and program for buddha
      *
      * @param fn The function to be iterated. Written in the language of C99.
-     * This can be a function of zn, c and n
+     * This can be a function of zn, c and n and can use the methods in
+     * ComplexFunctions.cl file
      * @param transforms The ArrayList of operator ID's
      * @param iterations The maximum number of iterations to be done
      */
     public void LoadProgramBuddhaComplex(final String fn, final ArrayList<Integer> transforms, int iterations) {
-        // Load the buddhaComplex source code
-        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyBuddhaComplex.cl";
+        // Load the BuddhaKernelComplex source code
+        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\BuddhaKernelComplex.cl";
         String buddhaSRC = readFile(buddhaFileName);
         // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", ""+iterations);
         
-        // Load the onlyComplex source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
+        // Load the ComplexFunctions source code
+        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\ComplexFunctions.cl";
         String complexSRC = readFile(complexFileName);
         complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
@@ -194,15 +200,16 @@ public class FractalManager {
      * Creates the kernel and program for mandelbrot
      *
      * @param fn The function to be iterated. Written in the language of C99.
-     * This can be a function of zn, c and n
+     * This can be a function of zn, c and n and can use the methods in
+     * ComplexFunctions.cl file
      * @param transforms The ArrayList of operator ID's
      */
     public void LoadProgramMandelbrot(final String fn, final ArrayList<Integer> transforms) {
         String t = getStringTransform(transforms);
         String it = getStringInverseTransform(transforms);
-        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyMand.cl";
+        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\MandelbrotKernel.cl";
         String mandelbrotSRC = readFile(mandFileName);
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\OnlyComplex.cl";
+        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu" + "\\ComplexFunctions.cl";
         String complexSRC = readFile(complexFileName);
         complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
                 + "\n" + "return " + fn + ";\n}\n\n";
@@ -337,24 +344,29 @@ public class FractalManager {
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
         
-        // Create the image depending on whether it is buddha or mandelbrot and so on
-        if ("buddha".equals(settings.fractalType.toLowerCase())) {
-            fractalData = createDataBuddhaMirror(settings);
-            image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
-            
-        } else if ("buddha complex".equals(settings.fractalType.toLowerCase())) {
-            fractalData = createDataBuddhaComplex(settings);
-            image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
-            
-        } else if ("mandelbrot complex".equals(settings.fractalType.toLowerCase())) {
-            return createDataMandelbrotComplex(settings, colorSchemeID);
-            
-        } else {
+         // Create the image depending on whether it is buddha or mandelbrot and so on
+        if (null == settings.fractalType) {
             fractalData = createDataMandelbrot(settings);
-            image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
+                image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
+                        scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
+        } else switch (settings.fractalType.toLowerCase()) {
+            case "buddha":
+                fractalData = createDataBuddhaMirror(settings);
+                image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
+                        scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+                break;
+            case "buddha complex":
+                fractalData = createDataBuddhaComplex(settings);
+                image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
+                        scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+                break;
+            case "mandelbrot complex":
+                return createDataMandelbrotComplex(settings, colorSchemeID);
+            default:
+                fractalData = createDataMandelbrot(settings);
+                image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
+                        scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
+                break;
         }
 
         System.out.println("Took " + (System.nanoTime() - time) / 1_000_000_000.0);
