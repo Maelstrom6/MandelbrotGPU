@@ -9,16 +9,16 @@ import java.util.ArrayList;
 public class FractalSettings {
 
     public int sizeX = 500, sizeY = 500;
-    public double leftest = -2, rightest = 2;
-    public double highest = 2, lowest = -2;
-    public boolean mirrorXaxis = true; // Unused
-    public boolean calculateComplex = false;
-    public int maxIterations = 5000;
+    public double leftest = -2, rightest = 2; // The real component of the left and right edge of the image
+    public double highest = 2, lowest = -2; // The imaginary compmonent of the top and bottom of the image
+    public boolean mirrorXaxis = true; // used for buddha. Still need to implement for mandelbrot
+    public boolean calculateComplex = false; // Whether to create the image with blocks
+    public int maxIterations = 5000; // The maximum iterations of fn
     public String fractalType = "Mandelbrot";
-    public double f0Re = 0, f0Im = 0; // Only used for julia
+    public double f0Re = 0, f0Im = 0; // Only used for julia. This is the value of c
     public String fn = "addComplex(powComplex(zn, 2), c)";//The formula that will be iterated. Available variables are zn, c and n.
     public ArrayList<Integer> transformOperators = new ArrayList();//A list of operator id's in RPN
-    public int colorSchemeID = 1;
+    public int colorSchemeID = 1; // The ID of the color scheme
     //Maybe add threshold
 
     public FractalSettings() {

@@ -51,14 +51,12 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      * Creates the kernel and creates the image
      *
      * @param settings The settings of the fractal
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
     @Override
-    public BufferedImage createProgramAndImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createProgramAndImage(final FractalSettings settings) {
         loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
-        return createImage(settings, colorSchemeID);
+        return createImage(settings);
     }
 
     /**
@@ -84,12 +82,10 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      * Calculate the fractal for given settings and color scheme
      *
      * @param settings The fractal settings we want to render
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
     @Override
-    public BufferedImage createImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createImage(final FractalSettings settings) {
         final long time = System.nanoTime();
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
@@ -98,15 +94,15 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
         if (!settings.calculateComplex && settings.mirrorXaxis) {
             fractalData = createDataBuddhaMirror(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+                    scheme.iterationsToRGBBuddha(settings.colorSchemeID, fractalData, settings.maxIterations));
         } else if (settings.calculateComplex) {
             fractalData = createDataBuddhaComplex(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+                    scheme.iterationsToRGBBuddha(settings.colorSchemeID, fractalData, settings.maxIterations));
         } else {
             fractalData = createDataBuddhaSimple(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBBuddha(colorSchemeID, fractalData, settings.maxIterations));
+                    scheme.iterationsToRGBBuddha(settings.colorSchemeID, fractalData, settings.maxIterations));
         }
         return image;
     }

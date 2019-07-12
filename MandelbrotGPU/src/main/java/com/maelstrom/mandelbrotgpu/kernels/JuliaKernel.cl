@@ -26,7 +26,7 @@ kernel void fractalKernel(
 		znMinOne = transform(znMinOne);
 
 		struct Complex c = newComplex(*f0Re, *f0Im, false);
-                c = transform(c); // It is unclear whether to transform or not so I just chose to
+                //c = transform(c); // It is unclear whether to transform or not so I just chose not to
 
 		results[id] = 0;
 

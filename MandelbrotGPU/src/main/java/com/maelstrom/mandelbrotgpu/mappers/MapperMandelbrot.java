@@ -51,14 +51,12 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
      * Creates the kernel and creates the image
      *
      * @param settings The settings of the fractal
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
     @Override
-    public BufferedImage createProgramAndImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createProgramAndImage(final FractalSettings settings) {
         loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
-        return createImage(settings, colorSchemeID);
+        return createImage(settings);
     }
 
     /**
@@ -98,22 +96,20 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
      * Calculate the fractal for given settings and color scheme
      *
      * @param settings The fractal settings we want to render
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
     @Override
-    public BufferedImage createImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createImage(final FractalSettings settings) {
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
 
         // Create the image depending on how it should be calculated
         if (settings.calculateComplex) {
-            return createDataMandelbrotComplex(settings, colorSchemeID);
+            return createDataMandelbrotComplex(settings, settings.colorSchemeID);
         } else {
             fractalData = createDataMandelbrot(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
-                    scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
+                    scheme.iterationsToRGBMandelbrot(settings.colorSchemeID, fractalData, settings.maxIterations));
         }
 
         return image;

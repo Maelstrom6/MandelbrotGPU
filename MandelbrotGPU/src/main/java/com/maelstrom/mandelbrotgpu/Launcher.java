@@ -21,10 +21,10 @@ public class Launcher {
         settings.fractalType = "Buddha";
         //settings.fractalType = "Mandelbrot";
         settings.fractalType = "Julia";
-        settings.f0Re = -0.8;
-        settings.f0Im = 0.156;
-        settings.transformOperators.add(-1);
-        //settings.transformOperators.add(6);
+        settings.f0Re = 0.285;
+        settings.f0Im = 0.01;
+        settings.transformOperators.add(-4);
+        settings.transformOperators.add(6);
         //settings.transformOperators.add(4);
         settings.leftest = -2;
         settings.rightest = 2;
@@ -34,7 +34,7 @@ public class Launcher {
         //obj = new FractalManager();
         //obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
         Mapper obj = new Mapper(settings.fractalType);
-        obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
+        obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
         
         /*for(int i = 0;i<=10;i++){//going from 1/2 to 1/3
             settings.transformOperators.clear();

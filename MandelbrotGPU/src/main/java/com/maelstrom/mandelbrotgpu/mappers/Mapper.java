@@ -33,13 +33,11 @@ public class Mapper {
      * initialization.
      *
      * @param settings The settings of the fractal
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
-    public BufferedImage createProgramAndImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createProgramAndImage(final FractalSettings settings) {
         loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
-        return createImage(settings, colorSchemeID);
+        return createImage(settings);
     }
 
     /**
@@ -65,10 +63,10 @@ public class Mapper {
      * ColorScheme
      * @return The BufferedImage of our fractal
      */
-    public BufferedImage createImage(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createImage(final FractalSettings settings) {
         final long time = System.nanoTime();
 
-        BufferedImage result = instance.createImage(settings, colorSchemeID);
+        BufferedImage result = instance.createImage(settings);
 
         System.out.println("Took " + (System.nanoTime() - time) / 1_000_000_000.0);
 
