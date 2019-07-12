@@ -1,5 +1,7 @@
 package com.maelstrom.mandelbrotgpu;
 
+import com.maelstrom.mandelbrotgpu.mappers.Mapper;
+
 /**
  *
  * @author Chris
@@ -13,12 +15,15 @@ public class Launcher {
         
         FractalSettings settings = new FractalSettings();
         settings.maxIterations = 100;
-        FractalManager obj;
-        settings.sizeX = 1000;
-        settings.sizeY = 1000;
+        //FractalManager obj;
+        settings.sizeX = 500;
+        settings.sizeY = 500;
         settings.fractalType = "Buddha";
-        settings.fractalType = "Mandelbrot";
-        //settings.transformOperators.add(-4);
+        //settings.fractalType = "Mandelbrot";
+        settings.fractalType = "Julia";
+        settings.f0Re = -0.8;
+        settings.f0Im = 0.156;
+        settings.transformOperators.add(-1);
         //settings.transformOperators.add(6);
         //settings.transformOperators.add(4);
         settings.leftest = -2;
@@ -26,7 +31,9 @@ public class Launcher {
         settings.highest = 2;
         settings.lowest = -2;
         //settings.fn = "addComplex(powComplex(zn, 3), c)";
-        obj = new FractalManager();
+        //obj = new FractalManager();
+        //obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
+        Mapper obj = new Mapper(settings.fractalType);
         obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
         
         /*for(int i = 0;i<=10;i++){//going from 1/2 to 1/3

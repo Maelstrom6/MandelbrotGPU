@@ -11,7 +11,6 @@ kernel void fractalKernel(
 
 	global double *results
 ) {
-	/* For explaination, refer to JavaCalculator.java */
 
 	/* Find out where we are */
 	const int id = get_global_id(0);
