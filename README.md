@@ -1,8 +1,10 @@
 # MandelbrotGPU
-Netbeans GPU based mandelbrot and buddhabrot creator.
+Netbeans GPU based Mandelbrot and buddhabrot creator.
 
-NOTE: This project is very "work-in-progress" and there are LOTS of unused functions and lots of spagetti.
-I'm still bringing over code from Mandelbrot3 to MandelbrotCPU. Multiple color schemes are still to be added.
+This repository uses OpenCL for the GPU project (MandelbrotGPU) and the CPU project (Mandelbrot3) requires no imports. Note that if you are running Linux, OpenCL may not work correctly.
+
+NOTE: This project is very "work-in-progress" and there are LOTS of unused functions and lots of spaghetti.
+I'm still bringing over code from Mandelbrot3 to MandelbrotCPU. Multiple color schemes are still to be added. It might have a possibility of implementing fractal flames.
 
 ### Images Guide
 Under the Mandelbrot3 project there are folders of images.
@@ -10,7 +12,7 @@ Folders called Mandelbrots contain mandelbrots while folders called Buddhas cont
 
 - Mandelbrots 1 and Buddhas 1 contains 13 images each.
 - Mandelbrots 2 and Buddhas 2 contains 169 images each.
-- Mandelbrots 3 and Buddhas 3 contains 1872 300x300 images of mandelbrots and buddhabrots respectivaley.
+- Mandelbrots 3 and Buddhas 3 contains 1872 300x300 images of mandelbrots and buddhabrots respectively.
 
 The bottom left corner is -4-4i and the top corner is 4+4i for each image.
 The names of each image have a naming convention: "MyNewTesta b c" where a,b,c are integers.
@@ -49,7 +51,7 @@ BufferedImage image = obj.mapNoMirror();
 obj.savePNG(image, System.getProperty("user.dir") + "Mandelbrot Picture.png");
 ```
 In the first line, we create a new object whose main mandelbrot formula is fn(z)=z^(numerator/denominator)+c.
-The image will have dimesnions width x height. 
+The image will have dimensions width x height. 
 The centre of the image will be the complex coordinate: cenreX + i\*centreY.
 The bottom left corner is the point (cenreX - limX) + i\*(cenreY - limY) and similarly the top corner is the complex point (cenreX + limX) + i\*(cenreY + limY).
 The calulatoin will go on for maximumIterations iterations.
@@ -61,19 +63,44 @@ The third line is simply a generic function that saves buffered images to the de
 
 
 ### Usage for MandelbrotGPU
-The Launcher class is a class with some usage examples. The main usage is as follows:
+The Launcher class is a class with some usage examples.
+##### Example 1
+The following example makes the default image which is a typical 500x500 image of a Mandelbrot with 5000 iterations from -2-2i to 2+2i:
 ```
 FractalSettings settings = new FractalSettings();
 //Adjust the values of settings as you wish.
-obj = new FractalManager();
-obj.LoadProgram(settings.fractalType, settings.fn, settings.transformOperators, 0);
-BufferedImage image = obj.createImageSimple(settings, 0);
+Mapper obj = new Mapper(settings.fractalType);
+BufferedImage image = obj.createProgramAndImage(settings);
 obj.savePNG(image, System.getProperty("user.dir") + "\\MyNewTest.png");
 ```
-new FractalSettings() creates a defualt instance of FractalSettings: A typical mandelbrot from -2-2i to 2+2i with with 500 iterations.
+new FractalSettings() creates a defualt instance of FractalSettings: A typical mandelbrot from -2-2i to 2+2i with 500 iterations.
 
-new FractalManager() creates a new FractalManager instance and only one instance should be made throughout runtime.
+new Mapper(settings.fractalType) creates a new Mapper instance and only one instance should be made throughout runtime. This is because of OpenCL and its initialization.
 
-LoadProgram loads the programs, kernels and so on. Multiple calls of this can be made during runtime. Ideally, the LoadProgram method should not need any parameters but in order to create the kernel, some settings are required.
+createProgramAndImage(settings) loads the programs, kernels and so on and then creates the desired image. Multiple calls of this can be made during runtime. An alternative to this is the following:
+```
+Mapper obj = new Mapper(settings.fractalType);
+obj.loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
+BufferedImage image = createImage(settings);
+```
+This alterantive can be used if you are creating multiple images without changing fn, transformOperators, maxIterations or calculateComplex.
 
-createImageSimple creates the image and performs the same function as mapNoMirror as in the Mandelbrot 3 project. createImage should not be used unless you are creating large mandelbrot images that would typically timeout under createImage.
+The variable calculateComplex should generally be false unless you are creating large mandelbrot images that would typically timeout the kernel.
+
+##### Example 2
+The following example makes a 1000x1000 image buddhabrot of an inverse transformation mandelbrot from -4-4i to 4+4i with a maximum of 100 iterations.
+```
+FractalSettings settings = new FractalSettings();
+settings.maxIterations = 100;
+settings.sizeX = 1000;
+settings.sizeY = 1000;
+settings.fractalType = "Buddha";
+settings.transformOperators.add(0);
+settings.leftest = -4;
+settings.rightest = 4;
+settings.highest = 4;
+settings.lowest = -4;
+Mapper obj = new Mapper(settings.fractalType);
+obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
+```
+
