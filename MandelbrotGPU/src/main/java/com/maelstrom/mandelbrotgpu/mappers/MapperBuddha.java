@@ -349,9 +349,9 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
         for (int i = 0; i < settings.sizeX * settings.sizeY; i++) {
             int x = i % settings.sizeX;
             int y = i / settings.sizeX;
-            results[i * 3] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3] = results[i * 3] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3];
-            results[i * 3 + 1] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1] = results[i * 3 + 1] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 1];
-            results[i * 3 + 2] = results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2] = results[i * 3 + 2] + results[((settings.sizeX - y - 1) * settings.sizeX + x) * 3 + 2];
+            results[i * 3] = results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3] = results[i * 3] + results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3];
+            results[i * 3 + 1] = results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3 + 1] = results[i * 3 + 1] + results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3 + 1];
+            results[i * 3 + 2] = results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3 + 2] = results[i * 3 + 2] + results[((settings.sizeY - y - 1) * settings.sizeX + x) * 3 + 2];
         }
 
         return results;

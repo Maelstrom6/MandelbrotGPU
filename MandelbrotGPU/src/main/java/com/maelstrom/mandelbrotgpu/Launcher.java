@@ -15,18 +15,18 @@ public class Launcher {
         // All the uncommmented code is just what I've been working on latley
         // You should probably ignore that and scroll down to the notable fractals section
         FractalSettings settings = new FractalSettings();
-        settings.maxIterations = 100;
-        settings.sizeX = 500;
-        settings.sizeY = 500;
+        settings.maxIterations = 1000;
+        settings.sizeX = 2000;
+        settings.sizeY = 4000;
         settings.fractalType = "Buddha";
+        settings.calculateComplex = true;
         //settings.f0Re = 0.285;
         //settings.f0Im = 0.01;
         //settings.fractalType = "Mandelbrot";
-
-        settings.transformOperators.add(-2);
-        settings.transformOperators.add(4);
-        settings.transformOperators.add(5);
-        settings.leftest = -4;
+        settings.transformOperators.add(3);
+        settings.transformOperators.add(2);
+        settings.transformOperators.add(0);
+        settings.leftest = 0;
         settings.rightest = 4;
         settings.highest = 4;
         settings.lowest = -4;
