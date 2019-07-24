@@ -32,7 +32,7 @@ public class MandelbrotStill {
         //Mand obj = new Mand(2, 1, 500, 500, 2, 2, 0, 0, 500, operators);
         //obj.savePNG(obj.mapNoMirror(), System.getProperty("user.dir") + "/MyNewTest0.png");
         Mand obj = new Mand(2, 1, 500, 500, 4, 4, 0, 0, 500, operators);
-        obj.savePNG(obj.mapNoMirror(), System.getProperty("user.dir") + "/MyNewTest.png");
+        obj.savePNG(obj.mapChangedFn(), System.getProperty("user.dir") + "/MyNewTest.png");
         
         
 
