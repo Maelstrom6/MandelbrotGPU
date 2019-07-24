@@ -20,6 +20,8 @@ kernel void fractalKernel(
         global const double *f0Re,
         global const double *f0Im,
 
+        global const double *threshold,
+
 	global double *results
 ) {
 
@@ -36,7 +38,6 @@ kernel void fractalKernel(
 		struct Complex c = newComplex(*f0Re, *f0Im, false);
                 //c = transform(c); // It is unclear whether to transform or not so I just chose not to
 
-		const double threshold = 2;
                 struct Complex visitedCoordinates[INSERT ITERATIONS HERE] = {newComplex(0,0,true)};
                 //Need to replace the above 5000 with *iterations
 
@@ -46,7 +47,7 @@ kernel void fractalKernel(
 
 			visitedCoordinates[i] = zn;
 
-			if(zn.r > threshold) {
+			if(zn.r > *threshold) {
 				int j=0;
                                 while(visitedCoordinates[j].r != 0){
                                         visitedCoordinates[j] = inverseTransform(visitedCoordinates[j]);

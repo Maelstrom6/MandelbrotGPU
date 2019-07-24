@@ -91,7 +91,18 @@ struct Complex powComplex(struct Complex c, int numer) {
     return newComplex(pow(c.r, 1.0 * numer), the, true);
 }
 
-double mod2Complex(struct Complex c) {return getRe(c)*getRe(c) + getIm(c)*getIm(c);}
+double mod2Complex(struct Complex c) {
+    return getRe(c)*getRe(c) + getIm(c)*getIm(c);
+}
+
+struct Complex absComplex(struct Complex c) {
+    return newComplex(c.r, fmod(abs(c.theta), (M_PI/2.0)), true);
+}
+
+int fib(int n){
+    double phi = (sqrt((double)5.0)+1)/2;
+    return (int)round((pow(phi, n) - pow(-phi, -n))/sqrt((double)5.0));
+}
 
 struct Complex powFracComplex(struct Complex c, int numer, int denom) {
         double the = getPrinciple(c.theta * numer / denom);
@@ -170,6 +181,12 @@ struct Complex multiplyComplex(struct Complex c, struct Complex num) {
         double t = getPrinciple(getIm(c));
         return newComplex(exp(getRe(c)), t, true);
     }
+
+struct Complex powComplexComplex(struct Complex c, struct Complex z) {
+    c = lnComplex(c);
+    c = multiplyComplex(c, z);
+    return expComplex(c);
+}
 
     struct Complex tanComplex(struct Complex c) {
         double x = getRe(c);

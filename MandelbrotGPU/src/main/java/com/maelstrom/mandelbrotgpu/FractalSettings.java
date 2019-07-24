@@ -17,14 +17,25 @@ public class FractalSettings {
     public String fractalType = "Mandelbrot";
     public double f0Re = 0, f0Im = 0; // Only used for julia. This is the value of c
     public String fn = "addComplex(powComplex(zn, 2), c)";//The formula that will be iterated. Available variables are zn, c and n.
+    /**
+     * Other examples for fn include:
+     * Default: "addComplex(powComplex(zn, 2), c)"
+     * Burning ship: "addComplex(powComplex(absComplex(zn), 2), c)"
+     * Tricorn: "addComplex(powComplex(newComplex(zn.r, 0 - zn.theta, true), 2), c)"
+     * Cardioid: "addComplex(cosComplex(zn), minverse(c))" (threshold should be 20)
+     * Gamma: "multiplyComplex(powComplexComplex(c, subComplex(zn, newComplex(1, 0, true))), expComplex(ainverse(c)))" (threshold should be huge)
+     * 
+     * NOTE: if you are getting a skewed looking image, 
+     * you should increase the threshold in the kernel to about 20 or higher
+     */
     public ArrayList<Integer> transformOperators = new ArrayList();//A list of operator id's in RPN
     public int colorSchemeID = 1; // The ID of the color scheme
-    //Maybe add threshold
+    public double threshold = 2; // The threshold radius of the complex number to consider it escaped
 
     public FractalSettings() {
     }
 
-    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, String fractalType, String fn, ArrayList<Integer> transformOperators) {
+    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, String fractalType, String fn, double threshold, ArrayList<Integer> transformOperators) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.leftest = leftest;
@@ -34,10 +45,11 @@ public class FractalSettings {
         this.mirrorXaxis = mirrorXaxis;
         this.fractalType = fractalType;
         this.fn = fn;
+        this.threshold = threshold;
         this.transformOperators = transformOperators;
     }
 
-    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, boolean calculateComplex, int maxIterations, String fractalType, double f0Re, double f0Im, String fn, ArrayList<Integer> transformOperators, int colorSchemeID) {
+    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, boolean calculateComplex, int maxIterations, String fractalType, double f0Re, double f0Im, String fn, double threshold, ArrayList<Integer> transformOperators, int colorSchemeID) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.leftest = leftest;
@@ -51,13 +63,14 @@ public class FractalSettings {
         this.f0Re = f0Re;
         this.f0Im = f0Im;
         this.fn = fn;
+        this.threshold = threshold;
         this.transformOperators = transformOperators;
         this.colorSchemeID = colorSchemeID;
     }
 
     @Override
     public FractalSettings clone() {
-        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, calculateComplex, maxIterations, fractalType, f0Re, f0Im, fn, transformOperators, colorSchemeID);
+        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, calculateComplex, maxIterations, fractalType, f0Re, f0Im, fn, threshold, transformOperators, colorSchemeID);
     }
 
     public void exportJSON() {

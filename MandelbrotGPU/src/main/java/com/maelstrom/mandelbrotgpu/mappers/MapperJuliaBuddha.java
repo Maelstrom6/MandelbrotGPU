@@ -227,6 +227,7 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
                     clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.sizeY}), null),
                     clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Re}), null),
                     clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Im}), null),
+                    clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.threshold}), null),
                     clCreateBuffer(context, CL_MEM_WRITE_ONLY, Sizeof.cl_double * settings.sizeX * settings.sizeY * 3, null, null)
                 };
 
@@ -281,6 +282,7 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.maxIterations}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Re}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Im}), null),
+            clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.threshold}), null),
             clCreateBuffer(context, CL_MEM_WRITE_ONLY, Sizeof.cl_double * settings.sizeX * settings.sizeY * 3, null, null)
         };
 

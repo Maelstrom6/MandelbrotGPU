@@ -15,21 +15,36 @@ public class Launcher {
         // All the uncommmented code is just what I've been working on latley
         // You should probably ignore that and scroll down to the notable fractals section
         FractalSettings settings = new FractalSettings();
-        settings.maxIterations = 1000;
-        settings.sizeX = 2000;
-        settings.sizeY = 4000;
-        settings.fractalType = "Buddha";
+        settings.maxIterations = 100;
+        settings.sizeX = 500;
+        settings.sizeY = 500;
+        settings.fractalType = "Julia Buddha";
+        //settings.fractalType = "Mandelbrot";
         settings.calculateComplex = true;
+        //settings.fn = "addComplex(multiplyScalarComplex(powComplex(zn, 2), 1.0 * fib(n+1) / (n+1)), c)";
+        
+        //settings.fn = "addComplex(powComplex(zn, 2), multiplyScalarComplex(c, 1.0 * (n+1) / fib(n+1)))";
+        
+        //settings.fn = "addComplex( multiplyScalarComplex(cosComplex(zn), M_PI), c)";
+        //settings.fn = "addComplex(cosComplex(multiplyScalarComplex(zn, M_PI)), c)";
+        
+        //settings.fn = "multiplyComplex(powComplexComplex(c, subComplex(zn, newComplex(1, 0, true))),"
+        //        + "expComplex(ainverse(c)))";
+        //settings.fn = "cosComplex(divideComplex(zn, c))";
+        settings.threshold = 1000;
+        settings.fn = "addComplex(cosComplex(zn), minverse(c))";
+        
+        //settings.fn = "addComplex(powComplex(multiplyScalarComplex(zn, 1.0 * n / fib(n)), 2), c)";
+        
         //settings.f0Re = 0.285;
         //settings.f0Im = 0.01;
-        //settings.fractalType = "Mandelbrot";
-        settings.transformOperators.add(3);
-        settings.transformOperators.add(2);
-        settings.transformOperators.add(0);
-        settings.leftest = 0;
-        settings.rightest = 4;
-        settings.highest = 4;
-        settings.lowest = -4;
+        //settings.transformOperators.add(-5);
+        //settings.transformOperators.add(-1);
+        //settings.transformOperators.add(6);
+        settings.leftest = -2;
+        settings.rightest = 2;
+        settings.highest = 2;
+        settings.lowest = -2;
 
         //obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
         Mapper obj = new Mapper(settings.fractalType);

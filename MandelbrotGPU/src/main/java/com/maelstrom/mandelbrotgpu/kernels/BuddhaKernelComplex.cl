@@ -17,6 +17,11 @@ kernel void fractalKernel(
         global const int *fullWidth,
         global const int *fullHeight,
 
+        global const double *f0Re,
+	global const double *f0Im,
+
+        global const double *threshold,
+
 	global double *results
 ) {
 
@@ -27,12 +32,11 @@ kernel void fractalKernel(
         const int iter = *iterations;
 	/* Check that we should calculate for this pixel */
 	if(y < *fullHeight) {
-		struct Complex zn = newComplex(*start + (*stop - *start) * x / *width, *top + (*bottom - *top) * y / *height, false);
-		zn = transform(zn);
+		struct Complex c = newComplex(*start + (*stop - *start) * x / *width, *top + (*bottom - *top) * y / *height, false);
+		c = transform(c);
 
-		struct Complex c = zn;
+		struct Complex zn = newComplex(*f0Re, *f0Im, false);
 
-		const double threshold = 2;
                 struct Complex visitedCoordinates[INSERT ITERATIONS HERE] = {newComplex(0,0,true)};
                 //Need to replace the above 5000 with *iterations
 
@@ -42,7 +46,7 @@ kernel void fractalKernel(
 
 			visitedCoordinates[i] = zn;
 
-			if(zn.r > threshold) {
+			if(zn.r > *threshold) {
 				int j=0;
                                 while(visitedCoordinates[j].r != 0){
                                         visitedCoordinates[j] = inverseTransform(visitedCoordinates[j]);

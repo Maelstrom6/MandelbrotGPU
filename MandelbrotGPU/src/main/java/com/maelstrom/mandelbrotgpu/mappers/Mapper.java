@@ -3,7 +3,6 @@ package com.maelstrom.mandelbrotgpu.mappers;
 import com.maelstrom.mandelbrotgpu.FractalSettings;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -64,8 +63,6 @@ public class Mapper {
      * time taken
      *
      * @param settings The fractal settings we want to render
-     * @param colorSchemeID The ID of the coloring scheme to be parsed to
-     * ColorScheme
      * @return The BufferedImage of our fractal
      */
     public BufferedImage createImage(final FractalSettings settings) {
@@ -99,8 +96,6 @@ public class Mapper {
     }
 
     public BufferedImage removeMiddlePixels(BufferedImage image) {
-        // Remove the first column
-        Rectangle rect = null;
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage result = new BufferedImage(width - 2, height - 2, BufferedImage.TYPE_INT_RGB);
@@ -117,6 +112,23 @@ public class Mapper {
         g2.drawImage(topRight, null, topRight.getWidth(), 0);
         g2.drawImage(bottomLeft, null, 0, bottomLeft.getHeight());
         g2.drawImage(bottomRight, null, topRight.getWidth(), bottomLeft.getHeight());
+        g2.dispose();
+        return result;
+    }
+    
+    public BufferedImage removeMiddlePixelsHorizontal(BufferedImage image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage result = new BufferedImage(width - 2, height - 2, BufferedImage.TYPE_INT_RGB);
+        BufferedImage top = image.getSubimage(0, 0, width, height / 2 - 1);
+        BufferedImage bottom = image.getSubimage(0, height / 2 + 1, width, height / 2 - 1);
+        Graphics2D g2 = result.createGraphics();
+        Color oldColor = g2.getColor();
+        g2.setPaint(Color.BLACK);
+        g2.fillRect(0, 0, width, height);
+        g2.setColor(oldColor);
+        g2.drawImage(top, null, 0, 0);
+        g2.drawImage(bottom, null, 0, top.getHeight());
         g2.dispose();
         return result;
     }
