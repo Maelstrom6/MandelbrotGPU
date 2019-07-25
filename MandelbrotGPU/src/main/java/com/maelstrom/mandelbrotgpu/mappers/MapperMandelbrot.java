@@ -71,25 +71,25 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
      */
     @Override
     public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex) {
-        String t = getStringTransform(transformOperators);
-        String it = getStringInverseTransform(transformOperators);
-        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\MandelbrotKernel.cl";
-        String mandelbrotSRC = readFile(mandFileName);
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\ComplexFunctions.cl";
-        String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
-                + "\n" + "return " + fn + ";\n}\n\n";
-        complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + t + ";\n"
-                + "	}\n\n";
-        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + it + ";\n"
-                + "	}\n\n";
+        
+        String mandelbrotSRC = getMandelbrotSRC();
+        String complexSRC = getComplexSRC(fn, transformOperators);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, mandelbrotSRC}, null, null);
         clBuildProgram(program, 0, null, null, null, null);
         kernel = clCreateKernel(program, "fractalKernel", null);
+    }
+    
+    /**
+     * Gets the openCL source code for the MandelbrotKernel
+     * 
+     * @return the openCL source code for the MandelbrotKernel.
+     */
+    private String getMandelbrotSRC() {
+        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\MandelbrotKernel.cl";
+        String mandelbrotSRC = readFile(mandFileName);
+        return mandelbrotSRC;
     }
 
     /**
@@ -163,7 +163,8 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
     /**
      * Calculate the fractal for given settings and color scheme only for
      * Mandelbrot. Should be used for large Mandelbrot images like 3000x3000 or
-     * bigger
+     * bigger. This is because the graphics card could timeout and produce an
+     * out of resources error.
      *
      * @param settings The fractal settings we want to render
      * @param colorSchemeID The ID of the coloring scheme to be parsed to

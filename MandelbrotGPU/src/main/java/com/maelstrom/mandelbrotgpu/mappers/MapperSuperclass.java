@@ -1,6 +1,7 @@
 package com.maelstrom.mandelbrotgpu.mappers;
 
 import com.maelstrom.mandelbrotgpu.FractalManager;
+import com.maelstrom.mandelbrotgpu.FractalSettings;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,6 +29,35 @@ public class MapperSuperclass {
     protected cl_program program;
     protected cl_kernel kernel;
     protected static double[] fractalData;
+
+    /**
+     * Gets the openCL source code for the Complex operations and struct.
+     *
+     * @param fn The function to be iterated. Written in the language of C99.
+     * This can be a function of zn, c and n and can use the methods in
+     * ComplexFunctions.cl file
+     * @param transformOperators The ArrayList of operator ID's to transform
+     * @return The source code of the Complex operations
+     */
+    protected String getComplexSRC(final String fn,
+            final ArrayList<Integer> transformOperators) {
+        String t = getStringTransform(transformOperators);
+        String it = getStringInverseTransform(transformOperators);
+
+        String complexFileName = System.getProperty("user.dir")
+                + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels"
+                + "\\ComplexFunctions.cl";
+        String complexSRC = readFile(complexFileName);
+        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
+                + "\n" + "return " + fn + ";\n}\n\n";
+        complexSRC += "struct Complex transform(struct Complex z){\n"
+                + "		return " + t + ";\n"
+                + "	}\n\n";
+        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
+                + "		return " + it + ";\n"
+                + "	}\n\n";
+        return complexSRC;
+    }
 
     /**
      * Creates the kernel code for the function Transform

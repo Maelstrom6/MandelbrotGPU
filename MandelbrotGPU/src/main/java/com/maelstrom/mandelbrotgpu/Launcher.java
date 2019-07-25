@@ -15,40 +15,28 @@ public class Launcher {
         // All the uncommmented code is just what I've been working on latley
         // You should probably ignore that and scroll down to the notable fractals section
         FractalSettings settings = new FractalSettings();
-        settings.maxIterations = 100;
+        settings.maxIterations = 500;
         settings.sizeX = 500;
         settings.sizeY = 500;
-        settings.fractalType = "Julia Buddha";
-        //settings.fractalType = "Mandelbrot";
+        settings.fractalType = "Buddha";
         settings.calculateComplex = true;
-        //settings.fn = "addComplex(multiplyScalarComplex(powComplex(zn, 2), 1.0 * fib(n+1) / (n+1)), c)";
+        settings.transformOperators.add(5);
+        settings.transformOperators.add(2);
+        settings.leftest = -8;
+        settings.rightest = 8;
+        settings.highest = 8;
+        settings.lowest = -8;
         
-        //settings.fn = "addComplex(powComplex(zn, 2), multiplyScalarComplex(c, 1.0 * (n+1) / fib(n+1)))";
-        
-        //settings.fn = "addComplex( multiplyScalarComplex(cosComplex(zn), M_PI), c)";
-        //settings.fn = "addComplex(cosComplex(multiplyScalarComplex(zn, M_PI)), c)";
-        
-        //settings.fn = "multiplyComplex(powComplexComplex(c, subComplex(zn, newComplex(1, 0, true))),"
-        //        + "expComplex(ainverse(c)))";
-        //settings.fn = "cosComplex(divideComplex(zn, c))";
-        settings.threshold = 1000;
-        settings.fn = "addComplex(cosComplex(zn), minverse(c))";
-        
-        //settings.fn = "addComplex(powComplex(multiplyScalarComplex(zn, 1.0 * n / fib(n)), 2), c)";
-        
-        //settings.f0Re = 0.285;
-        //settings.f0Im = 0.01;
-        //settings.transformOperators.add(-5);
-        //settings.transformOperators.add(-1);
-        //settings.transformOperators.add(6);
-        settings.leftest = -2;
-        settings.rightest = 2;
-        settings.highest = 2;
-        settings.lowest = -2;
-
-        //obj.savePNG(obj.createProgramAndImage(settings, 0), System.getProperty("user.dir") + "\\MyNewTest.png");
         Mapper obj = new Mapper(settings.fractalType);
         obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
+        
+        //Below are a few functions I am trying out
+        /*
+        settings.fn = "addComplex(multiplyScalarComplex(powComplex(zn, 2), 1.0 * fib(n+1) / (n+1)), c)";
+        settings.fn = "multiplyScalarComplex(addComplex(powComplex(zn, 2), c), 1.0 * fib(n+1) / (n+1))";
+        settings.fn = "multiplyScalarComplex(addComplex(multiplyScalarComplex(powComplex(zn, 2), 1.0 * fib(n+1) / (n+1)/(n+1)), c), 1.0 * (n+1)*(n+1) / fib(n+1))";
+        settings.fn = "addComplex(powComplex(zn, 2), multiplyScalarComplex(c, 1.0 * (n+1) / fib(n+1)))";
+        */
 
         // Below are some notable fractals:
         /*
@@ -64,7 +52,7 @@ public class Launcher {
         obj.savePNG(obj.createProgramAndImage(NotableSettings.Spider()), System.getProperty("user.dir") + "\\Spider.png");
          */
 
-        /*double speed = 0.01;
+ /*double speed = 0.01;
         for (double i = 0; i <= 1; i += speed) {//going from 1/2 to 1/3
 
             settings.transformOperators.clear();

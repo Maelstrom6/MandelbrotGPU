@@ -37,7 +37,7 @@ kernel void fractalKernel(
 			visitedCoordinates[i] = zn;
 
 			if(zn.r > *threshold) {
-				int j=0;
+				int j=1; // We ignore the first iteration since this tends to produce a lot of noise
                                 while(visitedCoordinates[j].r != 0){
                                         visitedCoordinates[j] = inverseTransform(visitedCoordinates[j]);
                                         double xCoordinate = getRe(visitedCoordinates[j]);

@@ -124,16 +124,7 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);
 
         // Load the ComplexFunctions source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\ComplexFunctions.cl";
-        String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
-                + "\n" + "return " + fn + ";\n}\n\n";
-        complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + getStringTransform(transforms) + ";\n"
-                + "	}\n\n";
-        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + getStringInverseTransform(transforms) + ";\n"
-                + "	}\n\n";
+        String complexSRC = getComplexSRC(fn, transforms);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
@@ -158,16 +149,7 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);
 
         // Load the ComplexFunctions source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\ComplexFunctions.cl";
-        String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
-                + "\n" + "return " + fn + ";\n}\n\n";
-        complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + getStringTransform(transforms) + ";\n"
-                + "	}\n\n";
-        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + getStringInverseTransform(transforms) + ";\n"
-                + "	}\n\n";
+        String complexSRC = getComplexSRC(fn, transforms);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
@@ -332,6 +314,9 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.sizeX}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.sizeY}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.maxIterations}), null),
+            clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Re}), null),
+            clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Im}), null),
+            clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.threshold}), null),
             clCreateBuffer(context, CL_MEM_WRITE_ONLY, Sizeof.cl_double * settings.sizeX * settings.sizeY * 3, null, null)
         };
 

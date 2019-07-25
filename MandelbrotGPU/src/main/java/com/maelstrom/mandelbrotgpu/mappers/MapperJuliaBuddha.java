@@ -121,16 +121,7 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);
 
         // Load the ComplexFunctions source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\ComplexFunctions.cl";
-        String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
-                + "\n" + "return " + fn + ";\n}\n\n";
-        complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + getStringTransform(transforms) + ";\n"
-                + "	}\n\n";
-        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + getStringInverseTransform(transforms) + ";\n"
-                + "	}\n\n";
+        String complexSRC = getComplexSRC(fn, transforms);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
@@ -155,16 +146,7 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);
 
         // Load the ComplexFunctions source code
-        String complexFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\ComplexFunctions.cl";
-        String complexSRC = readFile(complexFileName);
-        complexSRC += "struct Complex fn(struct Complex zn, struct Complex c, int n){"
-                + "\n" + "return " + fn + ";\n}\n\n";
-        complexSRC += "struct Complex transform(struct Complex z){\n"
-                + "		return " + getStringTransform(transforms) + ";\n"
-                + "	}\n\n";
-        complexSRC += "struct Complex inverseTransform(struct Complex z){\n"
-                + "		return " + getStringInverseTransform(transforms) + ";\n"
-                + "	}\n\n";
+        String complexSRC = getComplexSRC(fn, transforms);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, buddhaSRC}, null, null);
