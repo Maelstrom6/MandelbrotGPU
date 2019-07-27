@@ -2,7 +2,6 @@ package com.maelstrom.mandelbrotgpu.mappers;
 
 import com.maelstrom.mandelbrotgpu.ColorScheme;
 import com.maelstrom.mandelbrotgpu.FractalSettings;
-import static com.maelstrom.mandelbrotgpu.mappers.MapperSuperclass.fractalData;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import org.jocl.CL;
@@ -18,9 +17,9 @@ import org.jocl.cl_platform_id;
  *
  * @author Chris
  */
-public class MapperJulia extends MapperSuperclass implements MapperInterface{
+public class MapperOrbit extends MapperSuperclass implements MapperInterface {
 
-    public MapperJulia() {
+    public MapperOrbit() {
         // Enable exceptions and subsequently omit error checks in this sample
         CL.setExceptionsEnabled(true);
 
@@ -61,26 +60,36 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
     }
 
     /**
-     * Creates the kernel and program for Mandelbrot
+     * Creates the kernel and program for Orbit
      *
      * @param fn The function to be iterated. Written in the language of C99.
      * This can be a function of zn, c and n and can use the methods in
      * ComplexFunctions.cl file
      * @param transformOperators The ArrayList of operator ID's to transform
-     * @param maxIterations Not needed for the Julia implementation
-     * @param calculateComplex Not needed for the Julia implementation
-     * @param antiBuddha Not needed for Julia implementation
+     * @param maxIterations Not needed for the Orbit implementation
+     * @param calculateComplex Not needed for the Orbit implementation
      */
     @Override
     public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {
-        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\JuliaKernel.cl";
-        String mandelbrotSRC = readFile(mandFileName);
+        
+        String mandelbrotSRC = getOrbitSRC();
         String complexSRC = getComplexSRC(fn, transformOperators);
 
         // Create the kernel
         program = clCreateProgramWithSource(context, 2, new String[]{complexSRC, mandelbrotSRC}, null, null);
         clBuildProgram(program, 0, null, null, null, null);
         kernel = clCreateKernel(program, "fractalKernel", null);
+    }
+    
+    /**
+     * Gets the openCL source code for the OrbitKernel
+     * 
+     * @return the openCL source code for the OrbitKernel.
+     */
+    private String getOrbitSRC() {
+        String mandFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\OrbitKernel.cl";
+        String mandelbrotSRC = readFile(mandFileName);
+        return mandelbrotSRC;
     }
 
     /**
@@ -96,9 +105,9 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
 
         // Create the image depending on how it should be calculated
         if (settings.calculateComplex) {
-            return createDataComplex(settings, settings.colorSchemeID);
+            return createDataOrbitComplex(settings, settings.colorSchemeID);
         } else {
-            fractalData = createData(settings);
+            fractalData = createDataOrbit(settings);
             image.getRaster().setPixels(0, 0, settings.sizeX, settings.sizeY,
                     scheme.iterationsToRGBMandelbrot(settings.colorSchemeID, fractalData, settings.maxIterations));
         }
@@ -112,7 +121,7 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
      * @param settings The fractal settings we want to render
      * @return The double[] of our fractal
      */
-    protected double[] createData(final FractalSettings settings) {
+    protected double[] createDataOrbit(final FractalSettings settings) {
 
         // Create a new blank array to store the results
         double[] results = new double[settings.sizeX * settings.sizeY];
@@ -129,6 +138,7 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Re}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.f0Im}), null),
             clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_double, Pointer.to(new double[]{settings.threshold}), null),
+            clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, Sizeof.cl_int, Pointer.to(new int[]{settings.orbitID}), null),
             clCreateBuffer(context, CL_MEM_WRITE_ONLY, Sizeof.cl_double * settings.sizeX * settings.sizeY, null, null)
         };
 
@@ -153,15 +163,16 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
 
     /**
      * Calculate the fractal for given settings and color scheme only for
-     * Mandelbrot. Should be used for large Mandelbrot images like 3000x3000 or
-     * bigger
+     * Orbit. Should be used for large Orbit images like 3000x3000 or
+     * bigger. This is because the graphics card could timeout and produce an
+     * out of resources error.
      *
      * @param settings The fractal settings we want to render
      * @param colorSchemeID The ID of the coloring scheme to be parsed to
      * ColorScheme
      * @return The BufferedImage of our fractal
      */
-    public BufferedImage createDataComplex(final FractalSettings settings, final int colorSchemeID) {
+    public BufferedImage createDataOrbitComplex(final FractalSettings settings, final int colorSchemeID) {
         int blockSize = 1000;
         BufferedImage image = new BufferedImage(settings.sizeX, settings.sizeY, BufferedImage.TYPE_INT_RGB);
         ColorScheme scheme = new ColorScheme();
@@ -175,7 +186,7 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
                 blockSettings.rightest = settings.leftest + (settings.rightest - settings.leftest) * (x + blockSettings.sizeX) / settings.sizeX;
                 blockSettings.highest = settings.highest + (settings.lowest - settings.highest) * y / settings.sizeY;
                 blockSettings.lowest = settings.highest + (settings.lowest - settings.highest) * (y + blockSettings.sizeY) / settings.sizeY;
-                fractalData = createData(blockSettings);
+                fractalData = createDataOrbit(blockSettings);
                 image.getRaster().setPixels(x, y, blockSettings.sizeX, blockSettings.sizeY,
                         scheme.iterationsToRGBMandelbrot(colorSchemeID, fractalData, settings.maxIterations));
             }
@@ -183,5 +194,4 @@ public class MapperJulia extends MapperSuperclass implements MapperInterface{
 
         return image;
     }
-    
 }

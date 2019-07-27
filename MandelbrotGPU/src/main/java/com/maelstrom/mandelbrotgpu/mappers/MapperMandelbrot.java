@@ -55,7 +55,7 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
      */
     @Override
     public BufferedImage createProgramAndImage(final FractalSettings settings) {
-        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
+        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex, settings.antiBuddha);
         return createImage(settings);
     }
 
@@ -70,7 +70,7 @@ public class MapperMandelbrot extends MapperSuperclass implements MapperInterfac
      * @param calculateComplex Not needed for the Mandelbrot implementation
      */
     @Override
-    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex) {
+    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {
         
         String mandelbrotSRC = getMandelbrotSRC();
         String complexSRC = getComplexSRC(fn, transformOperators);

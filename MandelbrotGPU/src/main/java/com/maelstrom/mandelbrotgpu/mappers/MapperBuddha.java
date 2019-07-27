@@ -55,7 +55,7 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      */
     @Override
     public BufferedImage createProgramAndImage(final FractalSettings settings) {
-        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
+        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex, settings.antiBuddha);
         return createImage(settings);
     }
 
@@ -68,13 +68,14 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      * @param transformOperators The ArrayList of operator ID's to transform
      * @param maxIterations The maximum number of iterations
      * @param calculateComplex Whether the image should be calculated in blocks
+     * @param antiBuddha Whether the buddhabrot should be normal or anti
      */
     @Override
-    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex) {
+    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {
         if (calculateComplex) {
-            LoadProgramComplex(fn, transformOperators, maxIterations);
+            LoadProgramComplex(fn, transformOperators, maxIterations, antiBuddha);
         } else {
-            LoadProgramSimple(fn, transformOperators, maxIterations);
+            LoadProgramSimple(fn, transformOperators, maxIterations, antiBuddha);
         }
     }
 
@@ -116,9 +117,15 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      * @param transforms The ArrayList of operator ID's
      * @param iterations The maximum number of iterations to be done
      */
-    public void LoadProgramSimple(final String fn, final ArrayList<Integer> transforms, int iterations) {
+    public void LoadProgramSimple(final String fn, final ArrayList<Integer> transforms, int iterations, boolean antiBuddha) {
         // Load the BuddhaKernel source code
-        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\BuddhaKernel.cl";
+        String buddhaFileName;
+        if(antiBuddha){
+            buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\AntiBuddhaKernel.cl";
+        }else{
+            buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\BuddhaKernel.cl";
+        }
+        
         String buddhaSRC = readFile(buddhaFileName);
         // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);
@@ -141,9 +148,14 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      * @param transforms The ArrayList of operator ID's
      * @param iterations The maximum number of iterations to be done
      */
-    public void LoadProgramComplex(final String fn, final ArrayList<Integer> transforms, int iterations) {
+    public void LoadProgramComplex(final String fn, final ArrayList<Integer> transforms, int iterations, boolean antiBuddha) {
         // Load the BuddhaKernelComplex source code
-        String buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\BuddhaKernelComplex.cl";
+        String buddhaFileName;
+        if(antiBuddha){
+            buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\AntiBuddhaKernelComplex.cl";
+        }else{
+            buddhaFileName = System.getProperty("user.dir") + "\\src\\main\\java\\com\\maelstrom\\mandelbrotgpu\\kernels" + "\\BuddhaKernelComplex.cl";
+        }
         String buddhaSRC = readFile(buddhaFileName);
         // OpenCL does not allow for dynmaic length arrays so we simply change the length in the source code:
         buddhaSRC = buddhaSRC.replace("INSERT ITERATIONS HERE", "" + iterations);

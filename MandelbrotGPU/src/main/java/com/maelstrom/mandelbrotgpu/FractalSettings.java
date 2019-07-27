@@ -32,6 +32,8 @@ public class FractalSettings {
     public ArrayList<Integer> transformOperators = new ArrayList();//A list of operator id's in RPN
     public int colorSchemeID = 1; // The ID of the color scheme
     public double threshold = 2; // The threshold radius of the complex number to consider it escaped. AKA bailout
+    public boolean antiBuddha = false; // Whether the image should be an anti buddhabrot or a nornal buddhabrot if it is buddha
+    public int orbitID = 1; // The ID other the orbit algorithm if fracalType is "orbit"
 
     public FractalSettings() {
     }
@@ -50,7 +52,7 @@ public class FractalSettings {
         this.transformOperators = transformOperators;
     }
 
-    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, boolean calculateComplex, int maxIterations, String fractalType, double f0Re, double f0Im, String fn, double threshold, ArrayList<Integer> transformOperators, int colorSchemeID) {
+    public FractalSettings(int sizeX, int sizeY, double leftest, double rightest, double highest, double lowest, boolean mirrorXaxis, boolean calculateComplex, int maxIterations, String fractalType, double f0Re, double f0Im, String fn, double threshold, boolean antiBuddha, int orbitID, ArrayList<Integer> transformOperators, int colorSchemeID) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.leftest = leftest;
@@ -65,13 +67,15 @@ public class FractalSettings {
         this.f0Im = f0Im;
         this.fn = fn;
         this.threshold = threshold;
+        this.antiBuddha = antiBuddha;
+        this.orbitID = orbitID;
         this.transformOperators = transformOperators;
         this.colorSchemeID = colorSchemeID;
     }
 
     @Override
     public FractalSettings clone() {
-        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, calculateComplex, maxIterations, fractalType, f0Re, f0Im, fn, threshold, transformOperators, colorSchemeID);
+        return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, calculateComplex, maxIterations, fractalType, f0Re, f0Im, fn, threshold, antiBuddha, orbitID, transformOperators, colorSchemeID);
     }
 
     public void exportJSON() {

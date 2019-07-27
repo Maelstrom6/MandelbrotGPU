@@ -25,6 +25,8 @@ public class Mapper {
             instance = new MapperBuddha();
         } else if ("julia".equals(fractalType.toLowerCase())) {
             instance = new MapperJulia();
+        } else if ("orbit".equals(fractalType.toLowerCase())) {
+            instance = new MapperOrbit();
         } else if ("julia buddha".equals(fractalType.toLowerCase())) {
             instance = new MapperJuliaBuddha();
         } else {
@@ -40,7 +42,7 @@ public class Mapper {
      * @return The BufferedImage of our fractal
      */
     public BufferedImage createProgramAndImage(final FractalSettings settings) {
-        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
+        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex, settings.antiBuddha);
         return createImage(settings);
     }
 
@@ -54,8 +56,8 @@ public class Mapper {
      * @param maxIterations The maximum number of iterations of the fn
      * @param calculateComplex Whether the program should calculate in blocks
      */
-    public void loadProgram(final String fn, final ArrayList<Integer> transforms, final int maxIterations, final boolean calculateComplex) {
-        instance.loadProgram(fn, transforms, maxIterations, calculateComplex);
+    public void loadProgram(final String fn, final ArrayList<Integer> transforms, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {
+        instance.loadProgram(fn, transforms, maxIterations, calculateComplex, antiBuddha);
     }
 
     /**

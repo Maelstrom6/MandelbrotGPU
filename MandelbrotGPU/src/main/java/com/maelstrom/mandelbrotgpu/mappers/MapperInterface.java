@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public interface MapperInterface {
     BufferedImage createProgramAndImage(final FractalSettings settings);
     
-    void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex);
+    void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, boolean antiBuddha);
     
     BufferedImage createImage(final FractalSettings settings);
 }

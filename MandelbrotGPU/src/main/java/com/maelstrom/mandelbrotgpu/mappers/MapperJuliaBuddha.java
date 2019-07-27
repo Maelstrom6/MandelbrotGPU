@@ -56,7 +56,7 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
      */
     @Override
     public BufferedImage createProgramAndImage(final FractalSettings settings) {
-        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex);
+        loadProgram(settings.fn, settings.transformOperators, settings.maxIterations, settings.calculateComplex, settings.antiBuddha);
         return createImage(settings);
     }
 
@@ -69,9 +69,10 @@ public class MapperJuliaBuddha extends MapperSuperclass implements MapperInterfa
      * @param transformOperators The ArrayList of operator ID's to transform
      * @param maxIterations The maximum number of iterations
      * @param calculateComplex Whether the image should be calculated in blocks
+     * @param antiBuddha Whether the buddhabrot should be normal or anti
      */
     @Override
-    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex) {
+    public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {
         if (calculateComplex) {
             LoadProgramComplex(fn, transformOperators, maxIterations);
         } else {
