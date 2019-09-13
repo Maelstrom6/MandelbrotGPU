@@ -129,7 +129,7 @@ public class Mand {
                             //double yCoordinate = TransformY(startingxCoordinate, startingyCoordinate);
                             double xCoordinate = coordinate.getRe();
                             double yCoordinate = coordinate.getIm();
-                            double dist = PartOfOrbitRing(xCoordinate, yCoordinate);
+                            double dist = PartOfOrbitRelativeDistance(xCoordinate, yCoordinate);
                             //num = (int) (PartSet((-limX + (2.0 * limX * x / sizeX) + centreX), (limY - (2.0 * limY * i / sizeY)+centreY)));//-(2-xLim) for x to move it left
                             if (dist == 0) {//need to change this if yuou change i<100
                                 map.setRGB(x, i, Color.BLACK.getRGB());
@@ -155,6 +155,24 @@ public class Mand {
             }
         }
         return map;
+    }
+    
+    public double PartOfOrbitRelativeDistance(double x, double y){
+        Myi c = new Myi(x, y, false);
+        Myi znMinOne = new Myi(x, y, false);
+        Myi zn;
+        double minDistance = 0;
+        int i = 0;
+        while (i < maxI && znMinOne.getR() < 2) {
+            zn = znMinOne.power(numer, denom).add(c);
+            i++;
+            double zMinusPointModulus = zn.add(znMinOne.ainverse()).getR();
+            if(zMinusPointModulus > minDistance)
+                minDistance = zMinusPointModulus;
+            //distance = Math.min(distance, Math.pow(zn.getRe()-znMinOne.getRe(), 2)+Math.pow(zn.getIm()-znMinOne.getIm(), 2));
+            znMinOne = zn;
+        }
+        return (minDistance*100);
     }
     
     public double PartOfOrbitDot(double x, double y){
@@ -255,9 +273,18 @@ public class Mand {
         */
         // Find the average Im(z) is always zero
         //Myi f = fp.add(fm).multiply(0.5);
-        Myi f = fp.multiply(fm);
-        if(Math.random()<0.001){
+        Myi f = fm.multiply(fm).multiply(2).add(fp);
+        /*for(int i=0;i<1;i++){
+            fm = fMinus(f);
+            f = fm.multiply(fm);
+        }*/
+        if(Math.random()<0.0001){
+            System.out.println("");
+            System.out.println(z);
+            System.out.println(fm);
+            System.out.println(fp);
             System.out.println(f);
+            
         }
         if (f.getR() < 2){
             return maxI;
@@ -266,6 +293,25 @@ public class Mand {
         }
         // Check if the converted point is part of the mandelbrot set
         //return PartOfMand(fm.getRe(), fm.getIm());
+    }
+    
+    public int partOfPowerSeries(double x, double y){
+        Myi z = new Myi(x, y, false);
+        Myi tot = z;
+        tot = tot.add(z.power(2));
+        tot = tot.add(z.power(3).multiply(2));
+        tot = tot.add(z.power(4).multiply(5));
+        tot = tot.add(z.power(5).multiply(14));
+        tot = tot.add(z.power(6).multiply(42));
+        tot = tot.add(z.power(7).multiply(132));
+        tot = tot.add(z.power(8).multiply(429));
+        tot = tot.add(z.power(9).multiply(1430));
+        tot = tot.add(z.power(10).multiply(4862));
+        if(tot.getR() < 2){
+            return maxI;
+        }else{
+            return 1;
+        }
     }
     
     public BufferedImage mapNoIterations() {
