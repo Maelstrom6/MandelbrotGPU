@@ -15,23 +15,50 @@ public class Launcher {
         // All the uncommmented code is just what I've been working on latley
         // You should probably ignore that and scroll down to the notable fractals section
         FractalSettings settings = new FractalSettings();
-        settings.maxIterations = 500;
+//        settings.maxIterations = 500;
+//        settings.sizeX = 1000;
+//        settings.sizeY = 1000;
+//        //settings.fractalType = "Buddha";
+//        //settings.fractalType = "orbit";
+//        settings.threshold = 100;
+//        settings.orbitID = 3;
+//        settings.calculateComplex = true;
+//        //settings.antiBuddha = true;
+//        //settings.fn = "powFracComplex(subComplex(zn, c),1,2)";
+//        //settings.transformOperators.add(-5);
+//        settings.transformOperators.add(0);
+//        settings.transformOperators.add(4);
+//        settings.transformOperators.add(4);
+//        settings.transformOperators.add(4);
+//        
+//        settings.transformOperators.add(-5);
+//        settings.transformOperators.add(-4);
+//        //settings.transformOperators.add(0);
+//        //settings.transformOperators.add(0);
+//        settings.leftest = -4+0.234;
+//        settings.rightest = 4+0.234;
+//        settings.highest = 4;
+//        settings.lowest = -4;
+        //settings.transformOperators.add(0);
+        settings.transformOperators.add(-100000 - 3);
+        settings.transformOperators.add(271828 + 3);
+        
+        //settings.fractalType = "buddha";
+
+        //settings.transformOperators.add(3+3);
+        //settings.transformOperators.add(-2-3);
+        //settings = NotableSettings.TheBox();
         settings.sizeX = 1000;
         settings.sizeY = 1000;
-        settings.fractalType = "Buddha";
-        settings.fractalType = "orbit";
-        settings.threshold = 100;
-        settings.orbitID = 2;
-        settings.calculateComplex = true;
-        settings.antiBuddha = true;
-        //settings.transformOperators.add(-5);
-        //settings.transformOperators.add(4);
-        settings.transformOperators.add(0);
         settings.leftest = -4;
         settings.rightest = 4;
         settings.highest = 4;
         settings.lowest = -4;
+        settings.calculateComplex = true;
+        settings.maxIterations = 1000;
 
+        //settings.maxIterations = 5000;
+        //settings.fractalType = "orbit";
         Mapper obj = new Mapper(settings.fractalType);
         obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
 
@@ -55,7 +82,7 @@ public class Launcher {
         obj.savePNG(obj.createProgramAndImage(NotableSettings.Tree()), System.getProperty("user.dir") + "\\Tree.png");
         obj.savePNG(obj.createProgramAndImage(NotableSettings.Spider()), System.getProperty("user.dir") + "\\Spider.png");
          */
-        /*
+ /*
         double speed = 0.1;
         for (double i = -1; i <= 0; i += speed) {//going from 1/2 to 1/3
 

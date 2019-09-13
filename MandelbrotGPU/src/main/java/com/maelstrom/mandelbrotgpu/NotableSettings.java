@@ -20,7 +20,7 @@ public class NotableSettings {
         settings.transformOperators.add(-2);
         settings.transformOperators.add(4);
         settings.transformOperators.add(5);
-        settings.leftest = 4;
+        settings.leftest = -4;
         settings.rightest = 4;
         settings.highest = 4;
         settings.lowest = -4;

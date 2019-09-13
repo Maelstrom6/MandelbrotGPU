@@ -1,5 +1,6 @@
 package com.maelstrom.mandelbrotgpu;
 
+import com.google.gson.Gson;
 import java.util.ArrayList;
 
 /**
@@ -78,12 +79,29 @@ public class FractalSettings {
         return new FractalSettings(sizeX, sizeY, leftest, rightest, highest, lowest, mirrorXaxis, calculateComplex, maxIterations, fractalType, f0Re, f0Im, fn, threshold, antiBuddha, orbitID, transformOperators, colorSchemeID);
     }
 
-    public void exportJSON() {
-
+    /**
+     * Creates a JSON String of itself and returns that String
+     *
+     * @return the JSON String
+     */
+    public String exportJSON() {
+        FractalSettings settings = clone();
+        Gson gson = new Gson();
+        String settingsJSON = gson.toJson(settings);
+        return settingsJSON;
     }
 
-    public void importJSON() {
-
+    /**
+     * Used by external classes to create a FractalSettings variable from a JSON
+     * String
+     *
+     * @param settingsJSON The JSON String to be converted
+     * @return the new FractalSettings object with the JSON String applied
+     */
+    public static FractalSettings importJSON(String settingsJSON) {
+        Gson gson = new Gson();
+        FractalSettings settings = gson.fromJson(settingsJSON, FractalSettings.class);
+        return settings;
     }
 
     @Override

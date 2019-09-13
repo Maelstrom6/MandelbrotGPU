@@ -68,6 +68,7 @@ public class MapperOrbit extends MapperSuperclass implements MapperInterface {
      * @param transformOperators The ArrayList of operator ID's to transform
      * @param maxIterations Not needed for the Orbit implementation
      * @param calculateComplex Not needed for the Orbit implementation
+     * @param antiBuddha Not needed for the Orbit implementation
      */
     @Override
     public void loadProgram(final String fn, final ArrayList<Integer> transformOperators, final int maxIterations, final boolean calculateComplex, final boolean antiBuddha) {

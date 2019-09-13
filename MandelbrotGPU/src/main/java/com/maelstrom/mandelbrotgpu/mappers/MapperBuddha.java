@@ -177,7 +177,7 @@ public class MapperBuddha extends MapperSuperclass implements MapperInterface {
      */
     protected double[] createDataBuddhaComplex(final FractalSettings settings) {
         // Define the side length of each block to render
-        int blockSize = 1000;
+        int blockSize = 400;
 
         // Create a new blank array to store the results
         double[] results = new double[settings.sizeX * settings.sizeY * 3];
