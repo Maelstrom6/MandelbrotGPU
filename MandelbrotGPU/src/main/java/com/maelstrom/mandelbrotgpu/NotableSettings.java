@@ -49,10 +49,10 @@ public class NotableSettings {
         settings.transformOperators.add(1);
         settings.transformOperators.add(2);
         settings.transformOperators.add(-4);
-        settings.leftest = -4;
-        settings.rightest = 4;
-        settings.highest = 4;
-        settings.lowest = -4;
+        settings.leftest = -8;
+        settings.rightest = 8;
+        settings.highest = 8;
+        settings.lowest = -8;
         return settings;
     }
 
@@ -93,9 +93,9 @@ public class NotableSettings {
         settings.sizeX = 500;
         settings.sizeY = 500;
         settings.fractalType = "Buddha";
-        settings.transformOperators.add(-5);
         settings.transformOperators.add(-2);
         settings.transformOperators.add(1);
+        settings.transformOperators.add(5);
         settings.leftest = -4;
         settings.rightest = 4;
         settings.highest = 4;

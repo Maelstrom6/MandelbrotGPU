@@ -5,7 +5,6 @@
  */
 package com.maelstrom.mandelbrotgpu;
 
-import com.google.gson.Gson;
 import com.maelstrom.mandelbrotgpu.mappers.Mapper;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -14,8 +13,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Scanner;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -34,6 +32,7 @@ public class LauncherUI extends javax.swing.JFrame {
 
     FractalSettings oldSettings = getSettings();
     Mapper obj = new Mapper("Mandelbrot");
+    String previousFractalType = "Mandelbrot";
 
     /*public void run() {
         while (true) {
@@ -93,6 +92,12 @@ public class LauncherUI extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        txtOperators = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        cmbColorScheme = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        cmbNotableSettings = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,7 +113,7 @@ public class LauncherUI extends javax.swing.JFrame {
 
         txtLowest.setText("-4");
 
-        cmbFractalType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mandelbrot", "Buddhabrot", "Orbit", "Julia", "Buddha Julia" }));
+        cmbFractalType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mandelbrot", "Buddha", "Orbit", "Julia", "Buddha Julia" }));
 
         txtMaxI.setText("100");
 
@@ -180,6 +185,16 @@ public class LauncherUI extends javax.swing.JFrame {
 
         jLabel9.setText("Create antibuddha");
 
+        jLabel10.setText("Operator IDs");
+
+        cmbColorScheme.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Blues", "Greens" }));
+
+        jLabel11.setText("Color scheme");
+
+        cmbNotableSettings.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "The box", "Cave", "Tree", "Spider", "Bedbug", "Snowglobe", "Gates", "Diamond", "Kidney", "Starfish", "Scorpion", "Mandelbrot V2" }));
+
+        jLabel12.setText("Presets");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -188,56 +203,6 @@ public class LauncherUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblImage, javax.swing.GroupLayout.PREFERRED_SIZE, 568, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbFractalType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtFn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtf0Re, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel9))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtAntibuddha, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                                    .addComponent(txtOrbitID, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtf0Im, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnSave)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnImportJSON)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnExportJSON))
-                            .addComponent(btnRefresh, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(71, 71, 71)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(txtLeftest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(58, 58, 58)
-                                .addComponent(txtRightest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGap(56, 56, 56)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtLowest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtHighest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -257,12 +222,72 @@ public class LauncherUI extends javax.swing.JFrame {
                             .addComponent(txtMagnification, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtSizeYView, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 32, Short.MAX_VALUE)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtMaxI, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbFractalType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtFn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSave)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnImportJSON)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnExportJSON))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtOperators, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(txtLeftest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(58, 58, 58)
+                                        .addComponent(txtRightest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGap(56, 56, 56)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtLowest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtHighest, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(btnRefresh)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtf0Re, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtAntibuddha, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
+                                    .addComponent(txtOrbitID, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtf0Im, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbColorScheme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cmbNotableSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
@@ -303,7 +328,11 @@ public class LauncherUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtFn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel6))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtOperators, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtf0Im, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtf0Re, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -316,9 +345,17 @@ public class LauncherUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtAntibuddha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbColorScheme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cmbNotableSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnRefresh)
-                        .addGap(21, 21, 21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnExportJSON)
                             .addComponent(btnImportJSON))
@@ -327,7 +364,7 @@ public class LauncherUI extends javax.swing.JFrame {
                             .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnSave))
-                        .addGap(0, 4, Short.MAX_VALUE))
+                        .addGap(0, 7, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -341,13 +378,25 @@ public class LauncherUI extends javax.swing.JFrame {
         // Saves the settings but using the chosen size
         FractalSettings settings = getSelectedSettings("save");
         obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
-        JOptionPane.showMessageDialog(this, "Saved Successfully", "Nice", 1);
+        JOptionPane.showMessageDialog(this, "Saved Successfully to the current working directory.", "Nice", 1);
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    // Refreshes the view of the mandelbrot
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        // Refreshes the view of the mandelbrot
+        // Get all the settings from the UI
         FractalSettings settings = getSelectedSettings("view");
-
+        
+        // If user chose a preset, replace UI settings with the preset settings
+        if(cmbNotableSettings.getSelectedIndex()!=0){
+            setSelectedSettings(settings);
+        }
+        
+        // Create a new context and command queues for a new fractal type
+        if(!previousFractalType.equals(cmbFractalType.getSelectedItem()+"")){
+            obj = new Mapper(settings.fractalType);
+            previousFractalType = cmbFractalType.getSelectedItem()+"";
+        }
+        
         BufferedImage img = obj.createProgramAndImage(settings);
         ImageIcon image = new ImageIcon(img);
         lblImage.setIcon(image);
@@ -406,11 +455,23 @@ public class LauncherUI extends javax.swing.JFrame {
 
         cmbFractalType.setSelectedItem(settings.fractalType);
         txtFn.setText(settings.fn + "");
+        String operators = "";
+        if (!settings.transformOperators.isEmpty()) {
+            for (int operator : settings.transformOperators) {
+                operators = operators + " " + operator;
+            }
+            operators = operators.substring(1);
+        }
+        txtOperators.setText(operators);
 
         txtf0Re.setText(settings.f0Re + "");
         txtf0Im.setText(settings.f0Im + "");
         txtOrbitID.setText(settings.orbitID + "");
         txtAntibuddha.setText(settings.antiBuddha + "");
+        
+        cmbColorScheme.setSelectedIndex(settings.colorSchemeID-1);
+        
+        cmbNotableSettings.setSelectedIndex(0);
 
     }
 
@@ -447,6 +508,10 @@ public class LauncherUI extends javax.swing.JFrame {
 
             settings.fractalType = cmbFractalType.getSelectedItem() + "";
             settings.fn = txtFn.getText();
+            Scanner sc=new Scanner(txtOperators.getText());
+            while(sc.hasNext()){
+                settings.transformOperators.add(Integer.parseInt(sc.next()));
+            }
 
             settings.f0Re = Double.parseDouble(txtf0Re.getText());
             settings.f0Im = Double.parseDouble(txtf0Im.getText());
@@ -456,6 +521,49 @@ public class LauncherUI extends javax.swing.JFrame {
             settings.antiBuddha = Boolean.parseBoolean(txtAntibuddha.getText().toLowerCase());
 
             settings.calculateComplex = true;
+            
+            settings.colorSchemeID = cmbColorScheme.getSelectedIndex()+1;
+            
+            switch(cmbNotableSettings.getSelectedIndex()){
+                case 0:
+                    break;
+                case 1:
+                    settings = NotableSettings.TheBox();
+                    break;
+                case 2:
+                    settings = NotableSettings.Cave();
+                    break;
+                case 3:
+                    settings = NotableSettings.Tree();
+                    break;
+                case 4:
+                    settings = NotableSettings.Spider();
+                    break;
+                case 5:
+                    settings = NotableSettings.Bedbug();
+                    break;
+                case 6:
+                    settings = NotableSettings.Snowglobe();
+                    break;
+                case 7:
+                    settings = NotableSettings.GatesOfHeaven();
+                    break;
+                case 8:
+                    settings = NotableSettings.Diamond();
+                    break;
+                case 9:
+                    settings = NotableSettings.Kidney();
+                    break;
+                case 10:
+                    settings = NotableSettings.Starfish();
+                    break;
+                case 11:
+                    settings = NotableSettings.Scorpion();
+                    break;
+                case 12:
+                    settings = NotableSettings.MandelbrotV2();
+                    break;
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "We need numbers as inputs\n" + e, "Oof", 2);
         }
@@ -508,8 +616,13 @@ public class LauncherUI extends javax.swing.JFrame {
     private javax.swing.JButton btnImportJSON;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
+    private javax.swing.JComboBox<String> cmbColorScheme;
     private javax.swing.JComboBox<String> cmbFractalType;
+    private javax.swing.JComboBox<String> cmbNotableSettings;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -528,6 +641,7 @@ public class LauncherUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtLowest;
     private javax.swing.JTextField txtMagnification;
     private javax.swing.JTextField txtMaxI;
+    private javax.swing.JTextField txtOperators;
     private javax.swing.JTextField txtOrbitID;
     private javax.swing.JTextField txtRightest;
     private javax.swing.JTextField txtSizeXSave;

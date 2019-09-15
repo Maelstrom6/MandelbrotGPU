@@ -21,7 +21,8 @@ public class Mapper {
     protected static MapperInterface instance;
 
     public Mapper(String fractalType) {
-        if ("buddha".equals(fractalType.toLowerCase())) {
+        if ("buddha".equals(fractalType.toLowerCase()) 
+                || "buddhabrot".equals(fractalType.toLowerCase())) {
             instance = new MapperBuddha();
         } else if ("julia".equals(fractalType.toLowerCase())) {
             instance = new MapperJulia();

@@ -28,7 +28,7 @@ public class FractalSettings {
      * huge)
      *
      * NOTE: if you are getting a skewed looking image, you should increase the
-     * threshold in the kernel to about 20 or higher
+     * variable called threshold to about 20 or higher
      */
     public ArrayList<Integer> transformOperators = new ArrayList();//A list of operator id's in RPN
     public int colorSchemeID = 1; // The ID of the color scheme
