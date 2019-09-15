@@ -28,7 +28,8 @@ public class Mapper {
             instance = new MapperJulia();
         } else if ("orbit".equals(fractalType.toLowerCase())) {
             instance = new MapperOrbit();
-        } else if ("julia buddha".equals(fractalType.toLowerCase())) {
+        } else if ("julia buddha".equals(fractalType.toLowerCase()) 
+                || "buddha julia".equals(fractalType.toLowerCase())) {
             instance = new MapperJuliaBuddha();
         } else {
             instance = new MapperMandelbrot();

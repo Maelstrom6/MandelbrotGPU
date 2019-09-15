@@ -28,6 +28,7 @@ public class LauncherUI extends javax.swing.JFrame {
      */
     public LauncherUI() {
         initComponents();
+        btnRefreshActionPerformed(null);
     }
 
     FractalSettings oldSettings = getSettings();
@@ -98,6 +99,7 @@ public class LauncherUI extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         cmbNotableSettings = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
+        txtFileName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -105,13 +107,13 @@ public class LauncherUI extends javax.swing.JFrame {
 
         txtSizeYView.setText("500");
 
-        txtLeftest.setText("-4");
+        txtLeftest.setText("-2");
 
-        txtRightest.setText("4");
+        txtRightest.setText("2");
 
-        txtHighest.setText("4");
+        txtHighest.setText("2");
 
-        txtLowest.setText("-4");
+        txtLowest.setText("-2");
 
         cmbFractalType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mandelbrot", "Buddha", "Orbit", "Julia", "Buddha Julia" }));
 
@@ -161,7 +163,7 @@ public class LauncherUI extends javax.swing.JFrame {
             }
         });
 
-        txtMagnification.setText("4");
+        txtMagnification.setText("2");
 
         txtCentreX.setText("0");
 
@@ -179,7 +181,7 @@ public class LauncherUI extends javax.swing.JFrame {
 
         jLabel6.setText("Formula");
 
-        jLabel7.setText("Starting c for Julia");
+        jLabel7.setText("C for Julia and Orbit");
 
         jLabel8.setText("Orbit ID for orbits");
 
@@ -194,6 +196,8 @@ public class LauncherUI extends javax.swing.JFrame {
         cmbNotableSettings.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None", "The box", "Cave", "Tree", "Spider", "Bedbug", "Snowglobe", "Gates", "Diamond", "Kidney", "Starfish", "Scorpion", "Mandelbrot V2" }));
 
         jLabel12.setText("Presets");
+
+        txtFileName.setText("File name");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -240,12 +244,6 @@ public class LauncherUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtFn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnSave)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnImportJSON)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnExportJSON))
@@ -287,7 +285,15 @@ public class LauncherUI extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel12)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cmbNotableSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(cmbNotableSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSave)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(19, 19, 19))
         );
         layout.setVerticalGroup(
@@ -363,7 +369,8 @@ public class LauncherUI extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtSizeYSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtSizeXSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSave))
+                            .addComponent(btnSave)
+                            .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 7, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -377,8 +384,14 @@ public class LauncherUI extends javax.swing.JFrame {
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // Saves the settings but using the chosen size
         FractalSettings settings = getSelectedSettings("save");
-        obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\MyNewTest.png");
-        JOptionPane.showMessageDialog(this, "Saved Successfully to the current working directory.", "Nice", 1);
+        try{
+            obj.savePNG(obj.createProgramAndImage(settings), System.getProperty("user.dir") + "\\"+txtFileName.getText()+".png");
+            JOptionPane.showMessageDialog(this, "Saved Successfully to the current working directory.", "Nice", 1);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Failed to save the image.\n"
+                    + "Make sure the characters in the file name are viable.\n"
+                    + "Check that the size of the image are inputted as integers.", "Oof", 2);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     // Refreshes the view of the mandelbrot
@@ -635,6 +648,7 @@ public class LauncherUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtAntibuddha;
     private javax.swing.JTextField txtCentreX;
     private javax.swing.JTextField txtCentreY;
+    private javax.swing.JTextField txtFileName;
     private javax.swing.JTextField txtFn;
     private javax.swing.JTextField txtHighest;
     private javax.swing.JTextField txtLeftest;
