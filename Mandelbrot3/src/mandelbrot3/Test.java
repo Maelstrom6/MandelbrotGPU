@@ -11,21 +11,24 @@ public class Test {
     private static int maxI = 20;
 
     public static void main(String[] args) {
-        Myi z = new Myi(-0.1169, 0.75825, false);
-        System.out.println(fn(1000, z));
-        System.out.println(fMinus(z));
-        System.out.println(fPlus(z));
-        
-        System.out.println(partOfNoIterations(z));
-        for(double x=-2;x<2;x+=0.5){
-            for(double y=-2;y<2;y+=0.5){
-                z = new Myi(x, y, false);
-                System.out.println("");
-                System.out.println(z.getR()<2);
-                System.out.println(z=fPlus(z).multiply(fMinus(z)));
-                System.out.println(fn(1000, z));
-            }
-        }
+//        Myi z = new Myi(-0.1169, 0.75825, false);
+//        System.out.println(fn(1000, z));
+//        System.out.println(fMinus(z));
+//        System.out.println(fPlus(z));
+//        
+//        System.out.println(partOfNoIterations(z));
+//        for(double x=-2;x<2;x+=0.5){
+//            for(double y=-2;y<2;y+=0.5){
+//                z = new Myi(x, y, false);
+//                System.out.println("");
+//                System.out.println(z.getR()<2);
+//                System.out.println(z=fPlus(z).multiply(fMinus(z)));
+//                System.out.println(fn(1000, z));
+//            }
+//        }
+
+        Myi i = new Myi(0.0148954947042096, -0.84814878, false);
+        System.out.println((i.atan()));
         
         
         //-0.9548, 0.01
