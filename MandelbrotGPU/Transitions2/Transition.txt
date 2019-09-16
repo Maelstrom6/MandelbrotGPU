@@ -1,1 +1,0 @@
-This goes from (-5 3) to (-6 3) with the image from -8 to 8
